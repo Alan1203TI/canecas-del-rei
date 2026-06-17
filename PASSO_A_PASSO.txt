@@ -1,0 +1,190 @@
+PASSO A PASSO - ERP PROFISSIONAL CANECAS DEL REI
+================================================
+
+O sistema contém:
+
+- Login com e-mail e senha
+- Dashboard com gráficos
+- Cadastro de produtos
+- Venda rápida para tablet
+- Dinheiro, Pix, cartão de crédito e débito
+- Total vendido no dia
+- Clientes
+- Fornecedores
+- Compras de fornecedores
+- Entrada automática de estoque em compras
+- Baixa automática de estoque em vendas
+- Relatórios por período
+- Exportação CSV para abrir no Excel
+
+ARQUIVOS
+========
+
+index.html
+css/style.css
+js/firebase.js
+js/app.js
+
+CONFIGURAR FIREBASE
+===================
+
+1. Acesse:
+https://console.firebase.google.com
+
+2. Crie um projeto com o nome:
+canecas-del-rei
+
+3. Entre em Firestore Database.
+
+4. Clique em Criar banco de dados.
+
+5. Escolha Modo de teste.
+
+6. Depois vá em Authentication.
+
+7. Clique em Começar.
+
+8. Entre em Método de login.
+
+9. Ative E-mail/senha.
+
+10. Vá na engrenagem do projeto.
+
+11. Clique em Configurações do projeto.
+
+12. Role até Seus apps.
+
+13. Clique no ícone Web: </>
+
+14. Registre o app.
+
+15. Copie o firebaseConfig.
+
+16. Abra o arquivo:
+js/firebase.js
+
+17. Troque esta parte:
+
+const firebaseConfig = {
+  apiKey: "COLE_SUA_API_KEY_AQUI",
+  authDomain: "COLE_SEU_AUTH_DOMAIN_AQUI",
+  projectId: "COLE_SEU_PROJECT_ID_AQUI",
+  storageBucket: "COLE_SEU_STORAGE_BUCKET_AQUI",
+  messagingSenderId: "COLE_SEU_MESSAGING_SENDER_ID_AQUI",
+  appId: "COLE_SEU_APP_ID_AQUI"
+};
+
+pelos dados reais do Firebase.
+
+REGRAS DO FIRESTORE
+===================
+
+No Firebase:
+
+Firestore Database > Regras
+
+Apague tudo e cole somente isto:
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+
+Clique em Publicar.
+
+CRIAR O PRIMEIRO USUÁRIO
+========================
+
+1. Abra o sistema.
+
+2. Digite seu e-mail.
+
+3. Digite uma senha.
+
+4. Clique em Criar primeiro usuário.
+
+5. Depois clique em Entrar.
+
+Depois de criar o primeiro usuário, se quiser, eu posso remover o botão de criar usuário para ficar mais seguro.
+
+TESTAR NO COMPUTADOR
+====================
+
+Não abra o index.html com dois cliques.
+
+Use o VS Code:
+
+1. Abra a pasta no Visual Studio Code.
+
+2. Instale a extensão Live Server.
+
+3. Clique com botão direito no index.html.
+
+4. Clique em Open with Live Server.
+
+PUBLICAR NO GITHUB PAGES
+========================
+
+1. Crie um repositório no GitHub.
+
+Exemplo:
+canecas-del-rei-erp
+
+2. Envie todos os arquivos para o repositório.
+
+3. Entre no repositório.
+
+4. Clique em Settings.
+
+5. Clique em Pages.
+
+6. Em Source, escolha:
+Deploy from a branch
+
+7. Branch:
+main
+
+8. Pasta:
+/root
+
+9. Clique em Save.
+
+10. Aguarde alguns minutos.
+
+O link ficará parecido com:
+https://seuusuario.github.io/canecas-del-rei-erp/
+
+COMO USAR
+=========
+
+1. Cadastre produtos.
+
+2. Cadastre clientes, se quiser.
+
+3. Cadastre fornecedores, se quiser.
+
+4. Registre compras.
+   Se escolher um produto do estoque, a quantidade comprada entra automaticamente no estoque.
+
+5. Faça vendas.
+   Ao finalizar a venda, o estoque diminui automaticamente.
+
+6. Veja o dashboard.
+
+7. Gere relatórios por período.
+
+8. Exporte CSV e abra no Excel.
+
+OBSERVAÇÕES
+===========
+
+- O lucro é estimado com base no custo cadastrado no produto.
+- Se o custo estiver vazio, o lucro pode ficar incorreto.
+- Compras são consideradas saída financeira.
+- Vendas são consideradas entrada financeira.
+- Os dados ficam salvos no Firebase.
