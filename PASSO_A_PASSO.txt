@@ -266,3 +266,10 @@ ATUALIZAÇÃO - PEDIDOS CENTRALIZADOS
 - Foi adicionado o campo "Valor pago de sinal".
 - O sistema calcula automaticamente o "Saldo restante".
 - A Ordem de Produção e a mensagem de WhatsApp agora mostram valor total, sinal e saldo.
+
+ATUALIZAÇÃO - PEDIDOS COM MÚLTIPLOS PRODUTOS
+- Na página Pedidos, agora é possível adicionar vários produtos no mesmo pedido.
+- Ao selecionar um produto, o sistema mostra automaticamente o preço unitário cadastrado.
+- Cada item pode ter quantidade e preço unitário ajustados dentro do pedido.
+- O sistema calcula automaticamente subtotal, desconto, valor total, sinal pago e saldo restante.
+- A ordem de produção, WhatsApp, Kanban e lista de pedidos exibem todos os itens do pedido.
