@@ -6,3 +6,13 @@ input[readonly]{background:#f8fafc;color:var(--blue);font-weight:900}
 .pedido-itens{display:grid;gap:8px}.pedido-item-row{display:grid;grid-template-columns:1fr 80px 120px 120px auto;gap:8px;align-items:center;background:#f8fafc;border:1px solid var(--border);border-radius:14px;padding:10px}.pedido-item-row b{color:var(--blue)}.pedido-item-row input{padding:10px;border-radius:10px}.pedido-resumo{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}.pedido-resumo span{background:#eef2f7;border-radius:999px;padding:8px 12px;font-weight:900;color:var(--blue)}@media(max-width:650px){.pedido-item-row{grid-template-columns:1fr}.pedido-item-row .btn{width:100%}}
 
 .logo-img{display:block;object-fit:contain}.login-logo{width:100%;max-width:330px;height:auto;margin:0 auto 8px}.sidebar-logo{width:70px;height:54px;background:white;border-radius:14px;padding:5px;box-shadow:0 6px 16px rgba(0,0,0,.12)}.brand b{color:#fff}.brand span{color:#f6e7a6}.kanban-pay{margin-top:10px;border-top:1px solid var(--border);padding-top:10px;display:grid;gap:8px}.kanban-pay input,.kanban-pay select{padding:9px;border-radius:10px}.btn.goldbtn{background:var(--gold);color:#1d1300}.payment-mini{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.payment-mini .badge{background:#fef3c7;color:#7a6500}.topbar{border-top:4px solid var(--gold)}
+
+
+/* Ajuste da logo: pequena no canto e sem distorção */
+.logo-img{object-fit:contain;max-width:100%;}
+.sidebar .brand{align-items:center;gap:8px;padding-bottom:12px;margin-bottom:8px;}
+.sidebar-logo{width:46px!important;height:36px!important;min-width:46px;max-width:46px;object-fit:contain;background:#fff;border-radius:10px;padding:4px;box-shadow:0 4px 10px rgba(0,0,0,.12);}
+.brand b{font-size:15px;line-height:1.1;}
+.brand span{font-size:11px;line-height:1.1;}
+.login-logo{max-width:220px!important;max-height:120px;object-fit:contain;margin:0 auto 8px;}
+@media(max-width:1050px){.sidebar-logo{width:42px!important;height:34px!important;min-width:42px;}.sidebar .brand{justify-content:flex-start;}}
