@@ -137,11 +137,11 @@
             <p class="hint">Use apenas para apagar lançamentos criados em teste. Escolha uma data para evitar apagar dados reais por engano.</p>
             <div class="form-grid">
               <div><label>Data</label><input id="limpezaData" type="date"></div>
-              <div class="actions"><button id="apagarCaixaDia" class="btn danger" type="button">Apagar caixa/vendas da data</button></div>
+              <div class="actions"><button id="apagarCaixaDia" class="btn danger" type="button">Apagar caixa/vendas e entradas da data</button></div>
               <div class="actions"><button id="apagarRecebimentosDia" class="btn danger" type="button">Apagar recebimentos da data</button></div>
               <div class="actions"><button id="apagarPedidosTeste" class="btn danger" type="button">Apagar pedidos cancelados/teste</button></div>
             </div>
-            <p class="hint"><b>Caixa/vendas da data</b> remove vendas finalizadas daquele dia. <b>Recebimentos</b> remove entradas financeiras pagas naquela data. Pedidos cancelados/teste remove pedidos com status Cancelado ou observação contendo “teste”.</p>
+            <p class="hint"><b>Caixa/vendas e entradas da data</b> remove vendas finalizadas e os recebimentos pagos daquele dia, para o Dashboard zerar corretamente. <b>Recebimentos</b> remove apenas entradas financeiras pagas naquela data. Pedidos cancelados/teste remove pedidos com status Cancelado ou observação contendo “teste”.</p>
           </div>
         </div>
       </section>
