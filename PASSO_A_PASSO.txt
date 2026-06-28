@@ -256,3 +256,13 @@ OBSERVAÇÃO
 ============================================================
 
 Para uma IA real conectada ao ChatGPT/OpenAI, será necessário criar uma função backend segura, pois não é recomendado colocar chave de API diretamente no front-end do GitHub Pages.
+
+ATUALIZAÇÃO - PEDIDOS CENTRALIZADOS
+- O menu "Nova venda" foi removido da navegação principal.
+- Todas as operações agora devem ser feitas em "Pedidos".
+- No campo Tipo, escolha:
+  * Produto personalizado: reserva estoque, controla arte, produção, sinal e saldo restante.
+  * Produto pronto / venda rápida: registra como entregue, baixa estoque e lança venda/financeiro.
+- Foi adicionado o campo "Valor pago de sinal".
+- O sistema calcula automaticamente o "Saldo restante".
+- A Ordem de Produção e a mensagem de WhatsApp agora mostram valor total, sinal e saldo.

@@ -27,7 +27,6 @@
     <aside class="sidebar">
       <div class="brand"><div class="logo small">CDR</div><div><b>Canecas del Rei</b><span>ERP Personalizados</span></div></div>
       <button class="nav active" data-page="dashboard">Dashboard</button>
-      <button class="nav" data-page="venda">Nova venda</button>
       <button class="nav" data-page="pedidos">Pedidos</button>
       <button class="nav" data-page="producao">Produção</button>
       <button class="nav" data-page="produtos">Produtos</button>
@@ -43,12 +42,12 @@
     <main class="main">
       <header class="topbar">
         <div><h2 id="titulo">Dashboard</h2><p id="subtitulo">Resumo geral da Canecas del Rei</p></div>
-        <div class="total-dia"><span id="dataHoje"></span><strong id="topHoje">R$ 0,00</strong><small>Total vendido hoje</small></div>
+        <div class="total-dia"><span id="dataHoje"></span><strong id="topHoje">R$ 0,00</strong><small>Entradas de hoje</small></div>
       </header>
 
       <section id="dashboard" class="page active">
         <div class="cards cards6">
-          <div class="card"><span>Vendido hoje</span><strong id="dashHoje">R$ 0,00</strong></div>
+          <div class="card"><span>Entradas hoje</span><strong id="dashHoje">R$ 0,00</strong></div>
           <div class="card"><span>Entradas no mês</span><strong id="dashEntradas">R$ 0,00</strong></div>
           <div class="card"><span>Saídas no mês</span><strong id="dashSaidas">R$ 0,00</strong></div>
           <div class="card"><span>Lucro estimado</span><strong id="dashLucro">R$ 0,00</strong></div>
@@ -56,7 +55,7 @@
           <div class="card"><span>Estoque crítico</span><strong id="dashEstoqueCritico">0</strong></div>
         </div>
         <div class="grid2">
-          <div class="panel"><h3>Vendas dos últimos 7 dias</h3><canvas id="graficoDias"></canvas></div>
+          <div class="panel"><h3>Entradas dos últimos 7 dias</h3><canvas id="graficoDias"></canvas></div>
           <div class="panel"><h3>Formas de pagamento no mês</h3><canvas id="graficoPagamentos"></canvas></div>
           <div class="panel"><h3>Resumo do mês</h3><canvas id="graficoResumo"></canvas></div>
           <div class="panel"><h3>Produtos mais vendidos</h3><div id="ranking"></div></div>
@@ -81,8 +80,8 @@
       </section>
 
       <section id="pedidos" class="page">
-        <div class="panel"><h3>Novo pedido / orçamento</h3><form id="pedidoForm" class="form-grid">
-          <input id="pedidoId" type="hidden"><div><label>Cliente</label><select id="pedidoCliente"></select></div><div><label>Produto</label><select id="pedidoProduto"></select></div><div><label>Quantidade</label><input id="pedidoQtd" type="number" min="1" value="1"></div><div><label>Valor total</label><input id="pedidoValor" type="number" step="0.01"></div><div><label>Data de entrega</label><input id="pedidoEntrega" type="date"></div><div><label>Status</label><select id="pedidoStatus"><option>Orçamento</option><option>Pedido aprovado</option><option>Arte em criação</option><option>Aguardando aprovação</option><option>Produção</option><option>Pronto</option><option>Entregue</option><option>Cancelado</option></select></div><div><label>Arte / link da arte</label><input id="pedidoArte" placeholder="Link do arquivo ou descrição"></div><div><label>Imagem da arte</label><input id="pedidoImagemArquivo" type="file" accept="image/*"><input id="pedidoImagem" type="hidden"></div><div><label>Pagamento</label><select id="pedidoPagamento"><option>Pendente</option><option>Sinal pago</option><option>Pago</option><option>Fiado</option></select></div><div class="full"><label>Observações</label><textarea id="pedidoObs" placeholder="Detalhes de personalização, cores, nome, prazo..."></textarea></div><div class="actions"><button class="btn primary">Salvar pedido</button><button id="cancelarPedido" type="button" class="btn light">Cancelar</button></div>
+        <div class="panel"><h3>Novo pedido</h3><p class="hint">Use este módulo para tudo: produto personalizado, orçamento ou venda rápida de produto pronto.</p><form id="pedidoForm" class="form-grid">
+          <input id="pedidoId" type="hidden"><div><label>Cliente</label><select id="pedidoCliente"></select></div><div><label>Tipo</label><select id="pedidoTipo"><option value="personalizado">Produto personalizado</option><option value="pronto">Produto pronto / venda rápida</option></select></div><div><label>Produto</label><select id="pedidoProduto"></select></div><div><label>Quantidade</label><input id="pedidoQtd" type="number" min="1" value="1"></div><div><label>Valor total</label><input id="pedidoValor" type="number" step="0.01"></div><div><label>Valor pago de sinal</label><input id="pedidoSinal" type="number" min="0" step="0.01" value="0"></div><div><label>Saldo restante</label><input id="pedidoSaldo" type="text" readonly value="R$ 0,00"></div><div><label>Data de entrega</label><input id="pedidoEntrega" type="date"></div><div><label>Status</label><select id="pedidoStatus"><option>Orçamento</option><option>Pedido aprovado</option><option>Arte em criação</option><option>Aguardando aprovação</option><option>Produção</option><option>Pronto</option><option>Entregue</option><option>Cancelado</option></select></div><div><label>Arte / link da arte</label><input id="pedidoArte" placeholder="Link do arquivo ou descrição"></div><div><label>Imagem da arte</label><input id="pedidoImagemArquivo" type="file" accept="image/*"><input id="pedidoImagem" type="hidden"></div><div><label>Pagamento</label><select id="pedidoPagamento"><option>Pendente</option><option>Sinal pago</option><option>Pago</option><option>Fiado</option></select></div><div class="full"><label>Observações</label><textarea id="pedidoObs" placeholder="Detalhes de personalização, cores, nome, prazo..."></textarea></div><div class="actions"><button class="btn primary">Salvar pedido</button><button id="cancelarPedido" type="button" class="btn light">Cancelar</button></div>
         </form></div>
         <div class="panel"><div class="panel-head"><h3>Pedidos cadastrados</h3><input id="buscaPedido" placeholder="Buscar pedido..."></div><div id="listaPedidos" class="list"></div></div>
       </section>
@@ -117,7 +116,7 @@
         </div>
       </section>
 
-      <section id="relatorios" class="page"><div class="panel"><h3>Relatório por período</h3><div class="filters"><div><label>Início</label><input id="relInicio" type="date"></div><div><label>Fim</label><input id="relFim" type="date"></div><button id="gerarRelatorio" class="btn primary">Gerar</button><button id="exportarCSV" class="btn light">Exportar CSV</button></div></div><div class="cards"><div class="card"><span>Entradas</span><strong id="relEntradas">R$ 0,00</strong></div><div class="card"><span>Saídas</span><strong id="relSaidas">R$ 0,00</strong></div><div class="card"><span>Lucro</span><strong id="relLucro">R$ 0,00</strong></div><div class="card"><span>Vendas</span><strong id="relQtd">0</strong></div></div><div class="panel"><h3>Vendas</h3><div class="table"><table><thead><tr><th>Data</th><th>Cliente</th><th>Pagamento</th><th>Itens</th><th>Total</th><th>Lucro</th></tr></thead><tbody id="relTabela"></tbody></table></div></div></section>
+      <section id="relatorios" class="page"><div class="panel"><h3>Relatório por período</h3><div class="filters"><div><label>Início</label><input id="relInicio" type="date"></div><div><label>Fim</label><input id="relFim" type="date"></div><button id="gerarRelatorio" class="btn primary">Gerar</button><button id="exportarCSV" class="btn light">Exportar CSV</button></div></div><div class="cards"><div class="card"><span>Entradas</span><strong id="relEntradas">R$ 0,00</strong></div><div class="card"><span>Saídas</span><strong id="relSaidas">R$ 0,00</strong></div><div class="card"><span>Lucro</span><strong id="relLucro">R$ 0,00</strong></div><div class="card"><span>Vendas</span><strong id="relQtd">0</strong></div></div><div class="panel"><h3>Pedidos / vendas finalizadas</h3><div class="table"><table><thead><tr><th>Data</th><th>Cliente</th><th>Pagamento</th><th>Itens</th><th>Total</th><th>Lucro</th></tr></thead><tbody id="relTabela"></tbody></table></div></div></section>
     </main>
   </section>
   <div id="toast" class="toast"></div>
