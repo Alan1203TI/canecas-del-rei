@@ -20,24 +20,23 @@
       <label>E-mail</label><input id="email" type="email" required placeholder="seu@email.com">
       <label>Senha</label><input id="senha" type="password" required placeholder="Sua senha">
       <button class="btn primary" type="submit">Entrar</button>
-      <button id="criarUsuario" class="btn light" type="button">Criar primeiro usuário</button>
-      <small>Use criar usuário apenas na primeira configuração.</small>
     </form>
   </section>
 
   <section id="app" class="app hidden">
     <aside class="sidebar">
       <div class="brand"><img class="logo-img sidebar-logo" src="assets/logo-canecas-del-rei.png" alt="Canecas del Rei"><div><b>Canecas del Rei</b><span>ERP Personalizados</span></div></div>
-      <button class="nav active" data-page="dashboard">Dashboard</button>
-      <button class="nav" data-page="pedidos">Pedidos</button>
-      <button class="nav" data-page="producao">Produção</button>
-      <button class="nav" data-page="produtos">Produtos</button>
-      <button class="nav" data-page="clientes">Clientes</button>
-      <button class="nav" data-page="fornecedores">Fornecedores</button>
-      <button class="nav" data-page="compras">Compras</button>
-      <button class="nav" data-page="financeiro">Financeiro</button>
-      <button class="nav" data-page="ia">IA e WhatsApp</button>
-      <button class="nav" data-page="relatorios">Relatórios</button>
+      <button class="nav active admin-only" data-page="dashboard">Dashboard</button>
+      <button class="nav vendedor-ok" data-page="pedidos">Pedidos</button>
+      <button class="nav vendedor-ok" data-page="producao">Produção</button>
+      <button class="nav vendedor-ok" data-page="produtos">Produtos</button>
+      <button class="nav vendedor-ok" data-page="clientes">Clientes</button>
+      <button class="nav admin-only" data-page="fornecedores">Fornecedores</button>
+      <button class="nav admin-only" data-page="compras">Compras</button>
+      <button class="nav admin-only" data-page="financeiro">Financeiro</button>
+      <button class="nav admin-only" data-page="ia">IA e WhatsApp</button>
+      <button class="nav admin-only" data-page="relatorios">Relatórios</button>
+      <button class="nav admin-only" data-page="admin">Administração</button>
       <button id="sair" class="btn logout">Sair</button>
     </aside>
 
@@ -118,7 +117,36 @@
         </div>
       </section>
 
-      <section id="relatorios" class="page"><div class="panel"><h3>Relatório por período</h3><div class="filters"><div><label>Início</label><input id="relInicio" type="date"></div><div><label>Fim</label><input id="relFim" type="date"></div><button id="gerarRelatorio" class="btn primary">Gerar</button><button id="exportarCSV" class="btn light">Exportar CSV</button></div></div><div class="cards"><div class="card"><span>Entradas</span><strong id="relEntradas">R$ 0,00</strong></div><div class="card"><span>Saídas</span><strong id="relSaidas">R$ 0,00</strong></div><div class="card"><span>Lucro</span><strong id="relLucro">R$ 0,00</strong></div><div class="card"><span>Vendas</span><strong id="relQtd">0</strong></div></div><div class="panel"><h3>Pedidos / vendas finalizadas</h3><div class="table"><table><thead><tr><th>Data</th><th>Cliente</th><th>Pagamento</th><th>Itens</th><th>Total</th><th>Lucro</th></tr></thead><tbody id="relTabela"></tbody></table></div></div></section>
+
+      <section id="admin" class="page admin-only">
+        <div class="grid2">
+          <div class="panel">
+            <h3>Criar usuários do sistema</h3>
+            <p class="hint">O administrador fixo é <b>canecasdelrei@gmail.com</b>. Use esta área para criar vendedoras e outros acessos.</p>
+            <form id="usuarioForm" class="form-grid">
+              <div><label>Nome</label><input id="usuarioNome" placeholder="Ex.: Vendedora 1"></div>
+              <div><label>E-mail</label><input id="usuarioEmail" type="email" required></div>
+              <div><label>Senha inicial</label><input id="usuarioSenha" type="password" required minlength="6"></div>
+              <div><label>Perfil</label><select id="usuarioPerfil"><option value="vendedora">Vendedora</option><option value="admin">Administrador</option></select></div>
+              <div class="actions"><button class="btn primary">Criar usuário</button></div>
+            </form>
+            <div id="listaUsuarios" class="list"></div>
+          </div>
+          <div class="panel">
+            <h3>Limpeza de testes</h3>
+            <p class="hint">Use apenas para apagar lançamentos criados em teste. Escolha uma data para evitar apagar dados reais por engano.</p>
+            <div class="form-grid">
+              <div><label>Data</label><input id="limpezaData" type="date"></div>
+              <div class="actions"><button id="apagarCaixaDia" class="btn danger" type="button">Apagar caixa/vendas da data</button></div>
+              <div class="actions"><button id="apagarRecebimentosDia" class="btn danger" type="button">Apagar recebimentos da data</button></div>
+              <div class="actions"><button id="apagarPedidosTeste" class="btn danger" type="button">Apagar pedidos cancelados/teste</button></div>
+            </div>
+            <p class="hint"><b>Caixa/vendas da data</b> remove vendas finalizadas daquele dia. <b>Recebimentos</b> remove entradas financeiras pagas naquela data. Pedidos cancelados/teste remove pedidos com status Cancelado ou observação contendo “teste”.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="relatorios" class="page admin-only"><div class="panel"><h3>Relatório por período</h3><div class="filters"><div><label>Início</label><input id="relInicio" type="date"></div><div><label>Fim</label><input id="relFim" type="date"></div><button id="gerarRelatorio" class="btn primary">Gerar</button><button id="exportarCSV" class="btn light">Exportar CSV</button></div></div><div class="cards"><div class="card"><span>Entradas</span><strong id="relEntradas">R$ 0,00</strong></div><div class="card"><span>Saídas</span><strong id="relSaidas">R$ 0,00</strong></div><div class="card"><span>Lucro</span><strong id="relLucro">R$ 0,00</strong></div><div class="card"><span>Vendas</span><strong id="relQtd">0</strong></div></div><div class="panel"><h3>Pedidos / vendas finalizadas</h3><div class="table"><table><thead><tr><th>Data</th><th>Cliente</th><th>Pagamento</th><th>Itens</th><th>Total</th><th>Lucro</th></tr></thead><tbody id="relTabela"></tbody></table></div></div></section>
     </main>
   </section>
   <div id="toast" class="toast"></div>
