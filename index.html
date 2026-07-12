@@ -6,6 +6,9 @@
   <title>Canecas del Rei - ERP</title>
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="js/firebase.js"></script>
@@ -24,7 +27,7 @@
   </section>
 
   <section id="app" class="app hidden">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="brand"><img class="logo-img sidebar-logo" src="assets/logo-canecas-del-rei.png" alt="Canecas del Rei"><div><b>Canecas del Rei</b><span>ERP Personalizados</span></div></div>
       <button class="nav active admin-only" data-page="dashboard">Dashboard</button>
       <button class="nav vendedor-ok" data-page="pedidos">Pedidos</button>
@@ -42,7 +45,7 @@
 
     <main class="main">
       <header class="topbar">
-        <div><h2 id="titulo">Dashboard</h2><p id="subtitulo">Resumo geral da Canecas del Rei</p></div>
+        <div class="topbar-title"><button id="menuToggle" class="menu-toggle" type="button" aria-label="Abrir menu">☰</button><div><h2 id="titulo">Dashboard</h2><p id="subtitulo">Resumo geral da Canecas del Rei</p></div></div>
         <div class="total-dia"><span id="dataHoje"></span><strong id="topHoje">R$ 0,00</strong><small>Entradas de hoje</small></div>
       </header>
 

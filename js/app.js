@@ -112,3 +112,15 @@ $('gerarRelatorio').onclick=relatorio; $('exportarCSV').onclick=csv;
 function periodo(arr){const ini=$('relInicio').value,fim=$('relFim').value;return arr.filter(x=>(!ini||x.data>=ini)&&(!fim||x.data<=fim))}
 function relatorio(){const v=periodo(state.vendas),c=periodo(state.compras),ent=soma(v,'total'),sai=soma(c,'valor'),luc=soma(v,'lucro')-sai;$('relEntradas').textContent=fmt(ent);$('relSaidas').textContent=fmt(sai);$('relLucro').textContent=fmt(luc);$('relQtd').textContent=v.length;$('relTabela').innerHTML=v.length?v.map(x=>`<tr><td>${x.data?dateBR.format(new Date(x.data+'T00:00:00')):'-'}</td><td>${x.clienteNome||'-'}</td><td>${x.pagamento}</td><td>${(x.itens||[]).map(i=>i.quantidade+'x '+i.nome).join(', ')}</td><td>${fmt(x.total)}</td><td>${fmt(x.lucro)}</td></tr>`).join(''):'<tr><td colspan="6">Nenhuma venda.</td></tr>'}
 function csv(){const v=periodo(state.vendas),rows=[['Data','Cliente','Pagamento','Itens','Subtotal','Desconto','Total','Custo','Lucro','Obs']];v.forEach(x=>rows.push([x.data,x.clienteNome,x.pagamento,(x.itens||[]).map(i=>i.quantidade+'x '+i.nome).join(' | '),x.subtotal,x.desconto,x.total,x.custoTotal,x.lucro,x.obs||'']));const text=rows.map(r=>r.map(c=>'"'+String(c??'').replaceAll('"','""')+'"').join(';')).join('\n');const blob=new Blob(['\ufeff'+text],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='relatorio-canecas-del-rei-'+hoje()+'.csv';a.click();URL.revokeObjectURL(url)}
+// Melhorias de interface: navegação responsiva e fechamento automático no celular.
+document.addEventListener('DOMContentLoaded', () => {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('menuToggle');
+  if (toggle && sidebar) toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.querySelectorAll('.nav').forEach(button => button.addEventListener('click', () => {
+    if (window.innerWidth <= 1050 && sidebar) sidebar.classList.remove('open');
+  }));
+  document.addEventListener('click', event => {
+    if (window.innerWidth <= 1050 && sidebar?.classList.contains('open') && !sidebar.contains(event.target) && !toggle?.contains(event.target)) sidebar.classList.remove('open');
+  });
+});
