@@ -1,0 +1,6 @@
+ERP 2.4.2 - Correção definitiva de inicialização
+
+- Removida declaração duplicada da função renderFinanceiro.
+- Mantida apenas a versão atualizada com suporte a estornos.
+- Validada a sintaxe integral do js/app.js.
+- Adicionado versionamento no carregamento do app.js para evitar cache antigo no GitHub Pages.
