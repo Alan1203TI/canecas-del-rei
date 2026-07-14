@@ -52,3 +52,13 @@ body{font-feature-settings:"cv02","cv03","cv04","cv11";text-rendering:optimizeLe
 @media(max-width:1250px){.production-page .production-toolbar{grid-template-columns:1fr 1fr 1fr}.production-search{grid-column:span 2}.production-page .kanban{grid-template-columns:repeat(5,minmax(230px,1fr))}.kanban-helpbar{grid-template-columns:repeat(2,1fr);gap:12px}.kanban-helpbar span{border:0}}
 @media(max-width:760px){.production-page .production-head{align-items:flex-start;flex-direction:column}.production-head-actions{width:100%}.production-head-actions .btn{flex:1}.production-page .production-toolbar{grid-template-columns:1fr}.production-search{grid-column:auto}.production-page .kanban{display:flex}.production-page .kanban-col{min-width:86vw;height:62vh}.kanban-helpbar{grid-template-columns:1fr}.nav-production-sub{display:none}}
 #caixa .cards{margin-bottom:18px}#caixa .panel{border:1px solid #e5e7eb;box-shadow:0 8px 24px rgba(15,23,42,.05)}#caixaStatus{color:#b78a3e}.info small{display:block;margin-top:5px}.btn.danger{background:#fff1f2;color:#be123c;border-color:#fecdd3}
+
+/* ERP 2.5 - financeiro digital e conciliação */
+.reconciliation-panel{border-left:4px solid var(--gold,#bd9650)}
+.reconciliation-summary{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin-top:14px}
+.reconciliation-summary>div{background:#f7f8fa;border:1px solid #e3e6eb;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.reconciliation-summary b{font-size:1.25rem}.reconciliation-summary span{font-size:.82rem;color:#68707d}.reconciliation-summary .warning{background:#fff7e8;border-color:#efd39a}
+.finance-filters{display:flex;gap:8px;flex-wrap:wrap}.finance-filters select,.finance-filters input{min-height:40px;border:1px solid #dfe3e8;border-radius:10px;padding:0 12px;background:#fff}.finance-filters input{min-width:280px}
+.finance-row{align-items:center}.finance-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.finance-orphan{border-left:4px solid #e0a22f;background:#fffaf0}
+.card small{display:block;margin-top:7px;color:#7a818c}
+@media(max-width:900px){.reconciliation-summary{grid-template-columns:1fr 1fr}.finance-filters{width:100%}.finance-filters>*{width:100%!important;min-width:0!important}.finance-row{align-items:flex-start}.finance-actions{justify-content:flex-start;margin-top:12px}}

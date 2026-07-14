@@ -1,0 +1,11 @@
+ERP 2.5 - FINANCEIRO DIGITAL E CONCILIAÇÃO
+
+- Removido o módulo de abertura e fechamento de caixa físico.
+- Removidos dinheiro, sangria, suprimento, saldo inicial e dinheiro contado.
+- Formas de recebimento focadas em Pix e cartões.
+- Novos pedidos agora vinculam corretamente os lançamentos financeiros ao pedido.
+- Financeiro ganhou conferência de pendências, filtros e pesquisa.
+- Botões para ver pedido, marcar cobrança como paga, cancelar e estornar.
+- Rotina de recálculo corrige saldos vinculados, cancela duplicidades e cria cobranças ausentes.
+- Lançamentos antigos sem pedidoId são preservados e destacados para revisão manual.
+- Cache do app.js atualizado para v2.5.0.
