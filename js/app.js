@@ -351,4 +351,3 @@ async function reconciliarPendencias(){
 }
 $('reconciliarFinanceiro')?.addEventListener('click',reconciliarPendencias);
 $('filtroFinanceiroStatus')?.addEventListener('change',renderFinanceiro);$('filtroFinanceiroTipo')?.addEventListener('change',renderFinanceiro);$('buscaFinanceiro')?.addEventListener('input',renderFinanceiro);
-toast('Caixa fechado. Diferença: '+fmt(contado-esperado));refresh()});

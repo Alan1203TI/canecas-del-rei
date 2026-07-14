@@ -1,0 +1,6 @@
+ERP 2.5.2 - Correção final de sintaxe
+
+- Removida linha residual do antigo fechamento de caixa no final de js/app.js.
+- Corrigido erro Unexpected token '}' na linha 354.
+- Atualizado cache busting para js/app.js?v=2.5.2.
+- Arquivo JavaScript validado integralmente com verificação de sintaxe.

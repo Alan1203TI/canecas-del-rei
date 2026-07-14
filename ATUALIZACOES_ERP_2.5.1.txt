@@ -1,0 +1,6 @@
+ERP 2.5.1 — Correção de inicialização e login
+
+- Corrigido fechamento duplicado do listener do formulário financeiro na linha 180 do app.js.
+- Removido trecho residual duplicado que causava Unexpected token '}'.
+- Atualizada a versão de cache do app.js para 2.5.1.
+- Login e carregamento do módulo JavaScript restaurados.
