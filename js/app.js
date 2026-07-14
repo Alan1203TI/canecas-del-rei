@@ -148,3 +148,52 @@ document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLower
 searchInput?.addEventListener('input',()=>{const q=searchInput.value.trim().toLowerCase();if(q.length<2){searchResults.innerHTML='<div class="empty">Digite ao menos 2 caracteres.</div>';return}const results=[];state.clientes.filter(x=>[x.nome,x.whatsapp,x.email].join(' ').toLowerCase().includes(q)).slice(0,5).forEach(x=>results.push({type:'Cliente',title:x.nome,detail:x.whatsapp||x.email||'Cadastro de cliente',page:'clientes'}));state.produtos.filter(x=>[x.nome,x.sku,x.categoria].join(' ').toLowerCase().includes(q)).slice(0,5).forEach(x=>results.push({type:'Produto',title:x.nome,detail:`${x.sku||'Sem SKU'} • ${fmt(x.preco)}`,page:'produtos'}));state.pedidos.filter(x=>[x.clienteNome,x.status,x.numero,x.obs].join(' ').toLowerCase().includes(q)).slice(0,6).forEach(x=>results.push({type:'Pedido',title:x.clienteNome||'Pedido',detail:`${x.status||'Sem status'} • ${fmt(x.valor||x.total)}`,page:'pedidos'}));state.fornecedores.filter(x=>[x.nome,x.categoria,x.whatsapp].join(' ').toLowerCase().includes(q)).slice(0,4).forEach(x=>results.push({type:'Fornecedor',title:x.nome,detail:x.categoria||x.whatsapp||'Fornecedor',page:'fornecedores'}));searchResults.innerHTML=results.length?results.map((r,i)=>`<div class="search-result" data-result="${i}"><div><b>${r.title}</b><small>${r.detail}</small></div><span class="search-type">${r.type}</span></div>`).join(''):'<div class="empty">Nenhum resultado encontrado.</div>';searchResults.querySelectorAll('[data-result]').forEach(el=>el.addEventListener('click',()=>{goToPage(results[+el.dataset.result].page);closeSearch()}))});
 $('themeToggle')?.addEventListener('click',()=>{document.body.classList.toggle('dark-mode');localStorage.setItem('erp-theme',document.body.classList.contains('dark-mode')?'dark':'light')});if(localStorage.getItem('erp-theme')==='dark')document.body.classList.add('dark-mode');
 $('notificationBtn')?.addEventListener('click',()=>{const n=+$('notificationCount').textContent||0;toast(n?`${n} alerta(s): verifique entregas, estoque e financeiro.`:'Nenhum alerta crítico no momento.')});
+
+// ERP 2.1 - navegação interna dos módulos
+const moduleViewMap={pedido:'pedidos',produto:'produtos',cliente:'clientes',fornecedor:'fornecedores',compra:'compras',financeiro:'financeiro'};
+function showModuleList(module){
+  const pageId=moduleViewMap[module]; if(!pageId)return;
+  const page=document.getElementById(pageId); if(!page)return;
+  page.querySelector(`[data-module-view="${module}-list"]`)?.classList.remove('hidden');
+  page.querySelector(`[data-module-view="${module}-form"]`)?.classList.add('hidden');
+  page.querySelector('.module-page-head')?.classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showModuleForm(module){
+  const pageId=moduleViewMap[module]; if(!pageId)return;
+  const page=document.getElementById(pageId); if(!page)return;
+  page.querySelector(`[data-module-view="${module}-list"]`)?.classList.add('hidden');
+  page.querySelector(`[data-module-view="${module}-form"]`)?.classList.remove('hidden');
+  page.querySelector('.module-page-head')?.classList.add('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.openModuleForm=showModuleForm;
+window.openModuleList=showModuleList;
+document.querySelectorAll('.module-new-btn').forEach(btn=>btn.addEventListener('click',()=>{
+  const m=btn.dataset.module;
+  const form=document.querySelector(`[data-module-view="${m}-form"] form`); form?.reset();
+  const id=form?.querySelector('input[type="hidden"]'); if(id)id.value='';
+  if(m==='pedido'){state.pedidoItens=[];renderPedidoItens();updatePedidoSaldo()}
+  showModuleForm(m);
+}));
+document.querySelectorAll('.module-back-btn').forEach(btn=>btn.addEventListener('click',()=>showModuleList(btn.dataset.module)));
+document.querySelectorAll('.nav[data-page], [data-go]').forEach(btn=>btn.addEventListener('click',()=>{
+  const page=btn.dataset.page||btn.dataset.go;
+  const m=Object.keys(moduleViewMap).find(k=>moduleViewMap[k]===page); if(m)setTimeout(()=>showModuleList(m),0);
+}));
+
+// Ao editar, abrir o formulário em sua própria área
+const _editPedido=window.editPedido; window.editPedido=id=>{_editPedido(id);setTimeout(()=>showModuleForm('pedido'),0)};
+const _editProduto=window.editProduto; window.editProduto=id=>{_editProduto(id);setTimeout(()=>showModuleForm('produto'),0)};
+const _editCliente=window.editCliente; window.editCliente=id=>{_editCliente(id);setTimeout(()=>showModuleForm('cliente'),0)};
+const _editFornecedor=window.editFornecedor; window.editFornecedor=id=>{_editFornecedor(id);setTimeout(()=>showModuleForm('fornecedor'),0)};
+
+// Cancelar volta para a listagem
+['Pedido','Produto','Cliente','Fornecedor','Financeiro'].forEach(name=>{
+  const el=document.getElementById('cancelar'+name); if(el)el.addEventListener('click',()=>showModuleList(name.toLowerCase()));
+});
+['pedidoForm','produtoForm','clienteForm','fornecedorForm','compraForm','financeiroForm'].forEach(id=>{
+  const form=document.getElementById(id); if(!form)return;
+  const m=id.replace('Form','').replace('pedido','pedido').replace('produto','produto').replace('cliente','cliente').replace('fornecedor','fornecedor').replace('compra','compra').replace('financeiro','financeiro');
+  form.addEventListener('submit',()=>setTimeout(()=>showModuleList(m),700));
+});

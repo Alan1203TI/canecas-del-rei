@@ -1,164 +1,150 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canecas del Rei - ERP</title>
-  <link rel="icon" type="image/png" href="assets/favicon.png">
-  <link rel="apple-touch-icon" href="assets/favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script type="module" src="js/firebase.js"></script>
-  <script type="module" src="js/app.js"></script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Canecas del Rei - ERP</title>
+<link href="assets/favicon.png" rel="icon" type="image/png"/>
+<link href="assets/favicon.png" rel="apple-touch-icon"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="css/style.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/firebase.js" type="module"></script>
+<script src="js/app.js" type="module"></script>
 </head>
 <body>
-  <section id="login" class="login">
-    <form id="loginForm" class="login-card">
-      <img class="logo-img login-logo" src="assets/logo-canecas-del-rei.png" alt="Canecas del Rei">
-      <h1>Canecas del Rei</h1>
-      <p>ERP profissional para produtos personalizados</p>
-      <label>E-mail</label><input id="email" type="email" required placeholder="seu@email.com">
-      <label>Senha</label><input id="senha" type="password" required placeholder="Sua senha">
-      <button class="btn primary" type="submit">Entrar</button>
-    </form>
-  </section>
-
-  <section id="app" class="app hidden">
-    <aside class="sidebar" id="sidebar">
-      <div class="brand"><img class="logo-img sidebar-logo" src="assets/logo-canecas-del-rei.png" alt="Canecas del Rei"><div><b>Canecas del Rei</b><span>ERP Personalizados</span></div></div>
-      <button class="nav active admin-only" data-page="dashboard">Dashboard</button>
-      <button class="nav vendedor-ok" data-page="pedidos">Pedidos</button>
-      <button class="nav vendedor-ok" data-page="producao">Produção</button>
-      <button class="nav vendedor-ok" data-page="produtos">Produtos</button>
-      <button class="nav vendedor-ok" data-page="clientes">Clientes</button>
-      <button class="nav admin-only" data-page="fornecedores">Fornecedores</button>
-      <button class="nav admin-only" data-page="compras">Compras</button>
-      <button class="nav admin-only" data-page="financeiro">Financeiro</button>
-      <button class="nav admin-only" data-page="ia">IA e WhatsApp</button>
-      <button class="nav admin-only" data-page="relatorios">Relatórios</button>
-      <button class="nav admin-only" data-page="admin">Administração</button>
-      <button id="sair" class="btn logout">Sair</button>
-    </aside>
-
-    <main class="main">
-      <header class="topbar">
-        <div class="topbar-title"><button id="menuToggle" class="menu-toggle" type="button" aria-label="Abrir menu">☰</button><div><h2 id="titulo">Dashboard</h2><p id="subtitulo">Resumo geral da Canecas del Rei</p></div></div>
-        <div class="topbar-tools"><button id="globalSearchBtn" class="icon-action" type="button" title="Pesquisa global">⌕</button><button id="themeToggle" class="icon-action" type="button" title="Alternar tema">◐</button><button id="notificationBtn" class="icon-action notification-action" type="button" title="Central de alertas">♢<span id="notificationCount">0</span></button><div class="user-chip"><span class="user-avatar">CD</span><div><b id="userNameTop">Usuário</b><small id="userRoleTop">Acesso</small></div></div>
-        <div class="total-dia"><span id="dataHoje"></span><strong id="topHoje">R$ 0,00</strong><small>Entradas de hoje</small></div></div>
-      </header>
-
-      <section id="dashboard" class="page active">
-        <div class="dashboard-welcome">
-          <div><span class="eyebrow">CENTRAL DE OPERAÇÕES</span><h1>Visão completa do negócio</h1><p>Acompanhe vendas, produção, entregas, estoque e financeiro em um único lugar.</p></div>
-          <div class="quick-actions"><button class="quick-action" data-go="pedidos"><span>＋</span><b>Novo pedido</b><small>Criar orçamento ou venda</small></button><button class="quick-action" data-go="producao"><span>◇</span><b>Ver produção</b><small>Acompanhar andamento</small></button><button class="quick-action admin-only" data-go="financeiro"><span>$</span><b>Financeiro</b><small>Contas e recebimentos</small></button></div>
-        </div>
-        <div class="section-heading"><div><span class="eyebrow">INDICADORES</span><h3>Desempenho em tempo real</h3></div><span class="live-pill"><i></i> Dados atualizados</span></div>
-        <div class="cards cards6">
-          <div class="card"><span>Entradas hoje</span><strong id="dashHoje">R$ 0,00</strong></div>
-          <div class="card"><span>Entradas no mês</span><strong id="dashEntradas">R$ 0,00</strong></div>
-          <div class="card"><span>Saídas no mês</span><strong id="dashSaidas">R$ 0,00</strong></div>
-          <div class="card"><span>Lucro estimado</span><strong id="dashLucro">R$ 0,00</strong></div>
-          <div class="card"><span>Pedidos abertos</span><strong id="dashPedidos">0</strong></div>
-          <div class="card"><span>Estoque crítico</span><strong id="dashEstoqueCritico">0</strong></div>
-        </div>
-        <div class="grid2">
-          <div class="panel"><h3>Entradas dos últimos 7 dias</h3><canvas id="graficoDias"></canvas></div>
-          <div class="panel"><h3>Formas de pagamento no mês</h3><canvas id="graficoPagamentos"></canvas></div>
-          <div class="panel"><h3>Resumo do mês</h3><canvas id="graficoResumo"></canvas></div>
-          <div class="panel"><h3>Produtos mais vendidos</h3><div id="ranking"></div></div>
-          <div class="panel"><h3>Alertas de estoque</h3><div id="alertasEstoque"></div></div>
-          <div class="panel"><h3>Próximas entregas</h3><div id="proximasEntregas"></div></div>
-        </div>
-      </section>
-
-      <section id="venda" class="page">
-        <div class="grid-venda">
-          <div class="panel"><div class="panel-head"><h3>Produtos</h3><input id="buscaVenda" placeholder="Buscar produto..."></div><div id="listaProdutosVenda" class="prod-grid"></div></div>
-          <div class="panel carrinho-panel">
-            <h3>Carrinho</h3><div id="carrinho" class="empty">Nenhum produto adicionado.</div>
-            <label>Cliente</label><select id="clienteVenda"></select>
-            <label>Desconto</label><input id="descontoVenda" type="number" min="0" step="0.01" value="0">
-            <label>Pagamento</label><div class="payments"><button class="pay active" data-pay="Dinheiro">Dinheiro</button><button class="pay" data-pay="Pix">Pix</button><button class="pay" data-pay="Cartão de crédito">Crédito</button><button class="pay" data-pay="Cartão de débito">Débito</button></div>
-            <label>Observação</label><input id="obsVenda" placeholder="Pedido personalizado, entrega...">
-            <div class="total"><span>Total</span><strong id="totalVenda">R$ 0,00</strong></div>
-            <div class="actions"><button id="finalizarVenda" class="btn primary">Finalizar venda</button><button id="limparVenda" class="btn light">Limpar</button></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="pedidos" class="page">
-        <div class="panel"><h3>Novo pedido</h3><p class="hint">Use este módulo para tudo: produto personalizado, orçamento ou venda rápida de produto pronto.</p><form id="pedidoForm" class="form-grid">
-          <input id="pedidoId" type="hidden"><div><label>Cliente</label><select id="pedidoCliente"></select></div><div><label>Tipo</label><select id="pedidoTipo"><option value="personalizado">Produto personalizado</option><option value="pronto">Produto pronto / venda rápida</option></select></div><div><label>Produto</label><select id="pedidoProduto"></select></div><div><label>Quantidade</label><input id="pedidoQtd" type="number" min="1" value="1"></div><div><label>Preço unitário</label><input id="pedidoPrecoUnit" type="text" readonly value="R$ 0,00"></div><div class="actions"><button id="addPedidoItem" type="button" class="btn light">Adicionar produto</button></div><div class="full"><label>Itens do pedido</label><div id="pedidoItens" class="pedido-itens empty">Nenhum produto adicionado.</div></div><div><label>Subtotal</label><input id="pedidoSubtotal" type="text" readonly value="R$ 0,00"></div><div><label>Desconto</label><input id="pedidoDesconto" type="number" min="0" step="0.01" value="0"></div><div><label>Valor total</label><input id="pedidoValor" type="text" readonly value="R$ 0,00"></div><div><label>Valor pago de sinal</label><input id="pedidoSinal" type="number" min="0" step="0.01" value="0"></div><div><label>Método do sinal</label><select id="pedidoMetodoSinal"><option>Pix</option><option>Dinheiro</option><option>Cartão de crédito</option><option>Cartão de débito</option><option>Boleto</option><option>Transferência</option><option>Não informado</option></select></div><div><label>Saldo restante</label><input id="pedidoSaldo" type="text" readonly value="R$ 0,00"></div><div><label>Método do restante</label><select id="pedidoMetodoRestante"><option>Pix</option><option>Dinheiro</option><option>Cartão de crédito</option><option>Cartão de débito</option><option>Boleto</option><option>Transferência</option><option>Não informado</option></select></div><div><label>Data de entrega</label><input id="pedidoEntrega" type="date"></div><div><label>Status</label><select id="pedidoStatus"><option>Orçamento</option><option>Pedido aprovado</option><option>Arte em criação</option><option>Aguardando aprovação</option><option>Produção</option><option>Pronto</option><option>Entregue</option><option>Cancelado</option></select></div><div><label>Arte / link da arte</label><input id="pedidoArte" placeholder="Link do arquivo ou descrição"></div><div><label>Imagem da arte</label><input id="pedidoImagemArquivo" type="file" accept="image/*"><input id="pedidoImagem" type="hidden"></div><div><label>Situação do pagamento</label><select id="pedidoPagamento"><option>Pendente</option><option>Sinal pago</option><option>Pago</option><option>Fiado</option></select></div><div class="full"><label>Observações</label><textarea id="pedidoObs" placeholder="Detalhes de personalização, cores, nome, prazo..."></textarea></div><div class="actions"><button class="btn primary">Salvar pedido</button><button id="cancelarPedido" type="button" class="btn light">Cancelar</button></div>
-        </form></div>
-        <div class="panel"><div class="panel-head"><h3>Pedidos cadastrados</h3><input id="buscaPedido" placeholder="Buscar pedido..."></div><div id="listaPedidos" class="list"></div></div>
-      </section>
-
-      <section id="producao" class="page">
-        <div class="kanban" id="kanban"></div>
-      </section>
-
-      <section id="produtos" class="page">
-        <div class="panel"><h3>Cadastro de produto</h3><form id="produtoForm" class="form-grid">
-          <input id="produtoId" type="hidden"><div><label>Nome</label><input id="produtoNome" required></div><div><label>SKU/Código</label><input id="produtoSku"></div><div><label>Categoria</label><input id="produtoCategoria"></div><div><label>Preço venda</label><input id="produtoPreco" type="number" step="0.01" required></div><div><label>Custo</label><input id="produtoCusto" type="number" step="0.01"></div><div><label>Estoque físico</label><input id="produtoEstoque" type="number" step="1"></div><div><label>Estoque reservado</label><input id="produtoReservado" type="number" step="1" value="0"></div><div><label>Estoque mínimo</label><input id="produtoMinimo" type="number" step="1" value="0"></div><div><label>Fornecedor principal</label><select id="produtoFornecedor"></select></div><div><label>Imagem URL</label><input id="produtoImagem"></div><div><label>Upload imagem</label><input id="produtoImagemArquivo" type="file" accept="image/*"></div><div><label>Status</label><select id="produtoAtivo"><option value="true">Ativo</option><option value="false">Inativo</option></select></div><div class="full"><label>Descrição</label><textarea id="produtoDescricao"></textarea></div><div class="actions"><button class="btn primary">Salvar</button><button id="gerarDescProduto" type="button" class="btn light">Gerar descrição IA</button><button id="cancelarProduto" type="button" class="btn light">Cancelar</button></div>
-        </form></div>
-        <div class="panel"><div class="panel-head"><h3>Produtos cadastrados</h3><input id="buscaProduto" placeholder="Buscar..."></div><div class="table"><table><thead><tr><th>Produto</th><th>Categoria</th><th>Venda</th><th>Custo</th><th>Estoque</th><th>Disponível</th><th>Status</th><th>Ações</th></tr></thead><tbody id="tabelaProdutos"></tbody></table></div></div>
-      </section>
-
-      <section id="clientes" class="page"><div class="panel"><h3>Cadastro de cliente</h3><form id="clienteForm" class="form-grid"><input id="clienteId" type="hidden"><div><label>Nome</label><input id="clienteNome" required></div><div><label>WhatsApp</label><input id="clienteWhatsapp"></div><div><label>E-mail</label><input id="clienteEmail" type="email"></div><div><label>CPF/CNPJ</label><input id="clienteDocumento"></div><div><label>Instagram</label><input id="clienteInstagram"></div><div><label>Cidade</label><input id="clienteCidade"></div><div><label>Aniversário</label><input id="clienteAniversario" type="date"></div><div><label>Como conheceu</label><input id="clienteOrigem"></div><div class="full"><label>Observação</label><textarea id="clienteObs"></textarea></div><div class="actions"><button class="btn primary">Salvar</button><button id="cancelarCliente" type="button" class="btn light">Cancelar</button></div></form></div><div class="panel"><h3>Clientes</h3><div id="listaClientes" class="list"></div></div></section>
-
-      <section id="fornecedores" class="page"><div class="panel"><h3>Cadastro de fornecedor</h3><form id="fornecedorForm" class="form-grid"><input id="fornecedorId" type="hidden"><div><label>Nome</label><input id="fornecedorNome" required></div><div><label>Contato</label><input id="fornecedorContato"></div><div><label>WhatsApp</label><input id="fornecedorWhatsapp"></div><div><label>CNPJ</label><input id="fornecedorCnpj"></div><div><label>E-mail</label><input id="fornecedorEmail" type="email"></div><div><label>Prazo entrega</label><input id="fornecedorPrazo"></div><div><label>Categoria</label><input id="fornecedorCategoria"></div><div class="full"><label>Produtos fornecidos / observação</label><textarea id="fornecedorObs"></textarea></div><div class="actions"><button class="btn primary">Salvar</button><button id="cancelarFornecedor" type="button" class="btn light">Cancelar</button></div></form></div><div class="panel"><h3>Fornecedores</h3><div id="listaFornecedores" class="list"></div></div></section>
-
-      <section id="compras" class="page"><div class="panel"><h3>Registrar compra</h3><form id="compraForm" class="form-grid"><div><label>Fornecedor</label><select id="compraFornecedor"></select></div><div><label>Produto do estoque</label><select id="compraProduto"></select></div><div><label>Descrição</label><input id="compraDescricao" required></div><div><label>Quantidade</label><input id="compraQtd" type="number" min="1" required></div><div><label>Valor total</label><input id="compraValor" type="number" step="0.01" required></div><div><label>Data</label><input id="compraData" type="date" required></div><div class="full"><label>Obs</label><textarea id="compraObs"></textarea></div><div class="actions"><button class="btn primary">Salvar compra</button></div></form></div><div class="panel"><h3>Compras registradas</h3><div id="listaCompras" class="list"></div></div></section>
-
-      <section id="financeiro" class="page">
-        <div class="panel"><h3>Contas a pagar / receber</h3><form id="financeiroForm" class="form-grid"><input id="financeiroId" type="hidden"><div><label>Tipo</label><select id="financeiroTipo"><option value="receber">A receber</option><option value="pagar">A pagar</option></select></div><div><label>Descrição</label><input id="financeiroDescricao" required></div><div><label>Cliente/Fornecedor</label><input id="financeiroPessoa"></div><div><label>Valor</label><input id="financeiroValor" type="number" step="0.01" required></div><div><label>Vencimento</label><input id="financeiroVencimento" type="date" required></div><div><label>Status</label><select id="financeiroStatus"><option>Pendente</option><option>Pago</option><option>Vencido</option></select></div><div class="actions"><button class="btn primary">Salvar lançamento</button><button id="cancelarFinanceiro" type="button" class="btn light">Cancelar</button></div></form></div>
-        <div class="cards"><div class="card"><span>A receber pendente</span><strong id="finReceber">R$ 0,00</strong></div><div class="card"><span>A pagar pendente</span><strong id="finPagar">R$ 0,00</strong></div><div class="card"><span>Saldo previsto</span><strong id="finSaldo">R$ 0,00</strong></div><div class="card"><span>Vencidas</span><strong id="finVencidas">0</strong></div></div>
-        <div class="panel"><h3>Lançamentos</h3><div id="listaFinanceiro" class="list"></div></div>
-      </section>
-
-      <section id="ia" class="page">
-        <div class="grid2">
-          <div class="panel"><h3>Gerador de textos para produtos</h3><label>Produto ou ideia</label><input id="iaProduto" placeholder="Ex: Caneca personalizada de formatura"><label>Detalhes</label><textarea id="iaDetalhes" placeholder="Cores, público, ocasião, diferencial..."></textarea><div class="actions"><button id="iaGerar" class="btn primary">Gerar textos</button></div><div id="iaResultado" class="ia-box empty">O texto gerado aparecerá aqui.</div></div>
-          <div class="panel"><h3>Orçamento rápido para WhatsApp</h3><label>Pedido do cliente</label><textarea id="orcamentoTexto" placeholder="Ex: Cliente quer 35 canecas para formatura, entrega em 10 dias..."></textarea><label>WhatsApp do cliente</label><input id="orcamentoZap" placeholder="32999999999"><div class="actions"><button id="gerarOrcamento" class="btn primary">Gerar orçamento</button><button id="abrirWhats" class="btn light">Abrir WhatsApp</button></div><div id="orcamentoResultado" class="ia-box empty">O orçamento aparecerá aqui.</div></div>
-        </div>
-      </section>
+<section class="login" id="login">
+<form class="login-card" id="loginForm">
+<img alt="Canecas del Rei" class="logo-img login-logo" src="assets/logo-canecas-del-rei.png"/>
+<h1>Canecas del Rei</h1>
+<p>ERP profissional para produtos personalizados</p>
+<label>E-mail</label><input id="email" placeholder="seu@email.com" required="" type="email"/>
+<label>Senha</label><input id="senha" placeholder="Sua senha" required="" type="password"/>
+<button class="btn primary" type="submit">Entrar</button>
+</form>
+</section>
+<section class="app hidden" id="app">
+<aside class="sidebar" id="sidebar">
+<div class="brand"><img alt="Canecas del Rei" class="logo-img sidebar-logo" src="assets/logo-canecas-del-rei.png"/><div><b>Canecas del Rei</b><span>ERP Personalizados</span></div></div>
+<button class="nav active admin-only" data-page="dashboard">Dashboard</button>
+<button class="nav vendedor-ok" data-page="pedidos">Pedidos</button>
+<button class="nav vendedor-ok" data-page="producao">Produção</button>
+<button class="nav vendedor-ok" data-page="produtos">Produtos</button>
+<button class="nav vendedor-ok" data-page="clientes">Clientes</button>
+<button class="nav admin-only" data-page="fornecedores">Fornecedores</button>
+<button class="nav admin-only" data-page="compras">Compras</button>
+<button class="nav admin-only" data-page="financeiro">Financeiro</button>
+<button class="nav admin-only" data-page="ia">IA e WhatsApp</button>
+<button class="nav admin-only" data-page="relatorios">Relatórios</button>
+<button class="nav admin-only" data-page="admin">Administração</button>
+<button class="btn logout" id="sair">Sair</button>
+</aside>
+<main class="main">
+<header class="topbar">
+<div class="topbar-title"><button aria-label="Abrir menu" class="menu-toggle" id="menuToggle" type="button">☰</button><div><h2 id="titulo">Dashboard</h2><p id="subtitulo">Resumo geral da Canecas del Rei</p></div></div>
+<div class="topbar-tools"><button class="icon-action" id="globalSearchBtn" title="Pesquisa global" type="button">⌕</button><button class="icon-action" id="themeToggle" title="Alternar tema" type="button">◐</button><button class="icon-action notification-action" id="notificationBtn" title="Central de alertas" type="button">♢<span id="notificationCount">0</span></button><div class="user-chip"><span class="user-avatar">CD</span><div><b id="userNameTop">Usuário</b><small id="userRoleTop">Acesso</small></div></div>
+<div class="total-dia"><span id="dataHoje"></span><strong id="topHoje">R$ 0,00</strong><small>Entradas de hoje</small></div></div>
+</header>
+<section class="page active" id="dashboard">
+<div class="dashboard-welcome">
+<div><span class="eyebrow">CENTRAL DE OPERAÇÕES</span><h1>Visão completa do negócio</h1><p>Acompanhe vendas, produção, entregas, estoque e financeiro em um único lugar.</p></div>
+<div class="quick-actions"><button class="quick-action" data-go="pedidos"><span>＋</span><b>Novo pedido</b><small>Criar orçamento ou venda</small></button><button class="quick-action" data-go="producao"><span>◇</span><b>Ver produção</b><small>Acompanhar andamento</small></button><button class="quick-action admin-only" data-go="financeiro"><span>$</span><b>Financeiro</b><small>Contas e recebimentos</small></button></div>
+</div>
+<div class="section-heading"><div><span class="eyebrow">INDICADORES</span><h3>Desempenho em tempo real</h3></div><span class="live-pill"><i></i> Dados atualizados</span></div>
+<div class="cards cards6">
+<div class="card"><span>Entradas hoje</span><strong id="dashHoje">R$ 0,00</strong></div>
+<div class="card"><span>Entradas no mês</span><strong id="dashEntradas">R$ 0,00</strong></div>
+<div class="card"><span>Saídas no mês</span><strong id="dashSaidas">R$ 0,00</strong></div>
+<div class="card"><span>Lucro estimado</span><strong id="dashLucro">R$ 0,00</strong></div>
+<div class="card"><span>Pedidos abertos</span><strong id="dashPedidos">0</strong></div>
+<div class="card"><span>Estoque crítico</span><strong id="dashEstoqueCritico">0</strong></div>
+</div>
+<div class="grid2">
+<div class="panel"><h3>Entradas dos últimos 7 dias</h3><canvas id="graficoDias"></canvas></div>
+<div class="panel"><h3>Formas de pagamento no mês</h3><canvas id="graficoPagamentos"></canvas></div>
+<div class="panel"><h3>Resumo do mês</h3><canvas id="graficoResumo"></canvas></div>
+<div class="panel"><h3>Produtos mais vendidos</h3><div id="ranking"></div></div>
+<div class="panel"><h3>Alertas de estoque</h3><div id="alertasEstoque"></div></div>
+<div class="panel"><h3>Próximas entregas</h3><div id="proximasEntregas"></div></div>
+</div>
+</section>
+<section class="page" id="venda">
+<div class="grid-venda">
+<div class="panel"><div class="panel-head"><h3>Produtos</h3><input id="buscaVenda" placeholder="Buscar produto..."/></div><div class="prod-grid" id="listaProdutosVenda"></div></div>
+<div class="panel carrinho-panel">
+<h3>Carrinho</h3><div class="empty" id="carrinho">Nenhum produto adicionado.</div>
+<label>Cliente</label><select id="clienteVenda"></select>
+<label>Desconto</label><input id="descontoVenda" min="0" step="0.01" type="number" value="0"/>
+<label>Pagamento</label><div class="payments"><button class="pay active" data-pay="Dinheiro">Dinheiro</button><button class="pay" data-pay="Pix">Pix</button><button class="pay" data-pay="Cartão de crédito">Crédito</button><button class="pay" data-pay="Cartão de débito">Débito</button></div>
+<label>Observação</label><input id="obsVenda" placeholder="Pedido personalizado, entrega..."/>
+<div class="total"><span>Total</span><strong id="totalVenda">R$ 0,00</strong></div>
+<div class="actions"><button class="btn primary" id="finalizarVenda">Finalizar venda</button><button class="btn light" id="limparVenda">Limpar</button></div>
+</div>
+</div>
+</section>
+<section class="page" id="pedidos"><div class="module-page-head"><div><span class="eyebrow">GESTÃO</span><h1>Pedidos</h1><p>Gerencie todos os pedidos em uma área organizada.</p></div><button class="btn primary module-new-btn" data-module="pedido" type="button">＋ Novo pedido</button></div>
 
 
-      <section id="admin" class="page admin-only">
-        <div class="grid2">
-          <div class="panel">
-            <h3>Criar usuários do sistema</h3>
-            <p class="hint">O administrador fixo é <b>canecasdelrei@gmail.com</b>. Use esta área para criar vendedoras e outros acessos.</p>
-            <form id="usuarioForm" class="form-grid">
-              <div><label>Nome</label><input id="usuarioNome" placeholder="Ex.: Vendedora 1"></div>
-              <div><label>E-mail</label><input id="usuarioEmail" type="email" required></div>
-              <div><label>Senha inicial</label><input id="usuarioSenha" type="password" required minlength="6"></div>
-              <div><label>Perfil</label><select id="usuarioPerfil"><option value="vendedora">Vendedora</option><option value="admin">Administrador</option></select></div>
-              <div class="actions"><button class="btn primary">Criar usuário</button></div>
-            </form>
-            <div id="listaUsuarios" class="list"></div>
-          </div>
-          <div class="panel">
-            <h3>Limpeza de testes</h3>
-            <p class="hint">Use apenas para apagar lançamentos criados em teste. Escolha uma data para evitar apagar dados reais por engano.</p>
-            <div class="form-grid">
-              <div><label>Data</label><input id="limpezaData" type="date"></div>
-              <div class="actions"><button id="apagarCaixaDia" class="btn danger" type="button">Apagar caixa/vendas e entradas da data</button></div>
-              <div class="actions"><button id="apagarRecebimentosDia" class="btn danger" type="button">Apagar recebimentos da data</button></div>
-              <div class="actions"><button id="apagarPedidosTeste" class="btn danger" type="button">Apagar pedidos cancelados/teste</button></div>
-            </div>
-            <p class="hint"><b>Caixa/vendas e entradas da data</b> remove vendas finalizadas e os recebimentos pagos daquele dia, para o Dashboard zerar corretamente. <b>Recebimentos</b> remove apenas entradas financeiras pagas naquela data. Pedidos cancelados/teste remove pedidos com status Cancelado ou observação contendo “teste”.</p>
-          </div>
-        </div>
-      </section>
+<div class="module-list-view" data-module-view="pedido-list"><div class="panel"><div class="panel-head"><h3>Pedidos cadastrados</h3><input id="buscaPedido" placeholder="Buscar pedido..."/></div><div class="list" id="listaPedidos"></div></div></div><div class="module-form-view hidden" data-module-view="pedido-form"><div class="form-page-head"><button class="back-button module-back-btn" data-module="pedido" type="button">← Voltar</button><div><span class="eyebrow">PEDIDOS</span><h2>Novo pedido</h2><p>Preencha os dados abaixo e salve para retornar à listagem.</p></div></div><div class="panel"><h3>Novo pedido</h3><p class="hint">Use este módulo para tudo: produto personalizado, orçamento ou venda rápida de produto pronto.</p><form class="form-grid" id="pedidoForm">
+<input id="pedidoId" type="hidden"/><div><label>Cliente</label><select id="pedidoCliente"></select></div><div><label>Tipo</label><select id="pedidoTipo"><option value="personalizado">Produto personalizado</option><option value="pronto">Produto pronto / venda rápida</option></select></div><div><label>Produto</label><select id="pedidoProduto"></select></div><div><label>Quantidade</label><input id="pedidoQtd" min="1" type="number" value="1"/></div><div><label>Preço unitário</label><input id="pedidoPrecoUnit" readonly="" type="text" value="R$ 0,00"/></div><div class="actions"><button class="btn light" id="addPedidoItem" type="button">Adicionar produto</button></div><div class="full"><label>Itens do pedido</label><div class="pedido-itens empty" id="pedidoItens">Nenhum produto adicionado.</div></div><div><label>Subtotal</label><input id="pedidoSubtotal" readonly="" type="text" value="R$ 0,00"/></div><div><label>Desconto</label><input id="pedidoDesconto" min="0" step="0.01" type="number" value="0"/></div><div><label>Valor total</label><input id="pedidoValor" readonly="" type="text" value="R$ 0,00"/></div><div><label>Valor pago de sinal</label><input id="pedidoSinal" min="0" step="0.01" type="number" value="0"/></div><div><label>Método do sinal</label><select id="pedidoMetodoSinal"><option>Pix</option><option>Dinheiro</option><option>Cartão de crédito</option><option>Cartão de débito</option><option>Boleto</option><option>Transferência</option><option>Não informado</option></select></div><div><label>Saldo restante</label><input id="pedidoSaldo" readonly="" type="text" value="R$ 0,00"/></div><div><label>Método do restante</label><select id="pedidoMetodoRestante"><option>Pix</option><option>Dinheiro</option><option>Cartão de crédito</option><option>Cartão de débito</option><option>Boleto</option><option>Transferência</option><option>Não informado</option></select></div><div><label>Data de entrega</label><input id="pedidoEntrega" type="date"/></div><div><label>Status</label><select id="pedidoStatus"><option>Orçamento</option><option>Pedido aprovado</option><option>Arte em criação</option><option>Aguardando aprovação</option><option>Produção</option><option>Pronto</option><option>Entregue</option><option>Cancelado</option></select></div><div><label>Arte / link da arte</label><input id="pedidoArte" placeholder="Link do arquivo ou descrição"/></div><div><label>Imagem da arte</label><input accept="image/*" id="pedidoImagemArquivo" type="file"/><input id="pedidoImagem" type="hidden"/></div><div><label>Situação do pagamento</label><select id="pedidoPagamento"><option>Pendente</option><option>Sinal pago</option><option>Pago</option><option>Fiado</option></select></div><div class="full"><label>Observações</label><textarea id="pedidoObs" placeholder="Detalhes de personalização, cores, nome, prazo..."></textarea></div><div class="actions"><button class="btn primary">Salvar pedido</button><button class="btn light" id="cancelarPedido" type="button">Cancelar</button></div>
+</form></div></div></section>
+<section class="page" id="producao">
+<div class="kanban" id="kanban"></div>
+</section>
+<section class="page" id="produtos"><div class="module-page-head"><div><span class="eyebrow">GESTÃO</span><h1>Produtos</h1><p>Consulte produtos, preços e estoque.</p></div><button class="btn primary module-new-btn" data-module="produto" type="button">＋ Novo produto</button></div>
 
-      <section id="relatorios" class="page admin-only"><div class="panel"><h3>Relatório por período</h3><div class="filters"><div><label>Início</label><input id="relInicio" type="date"></div><div><label>Fim</label><input id="relFim" type="date"></div><button id="gerarRelatorio" class="btn primary">Gerar</button><button id="exportarCSV" class="btn light">Exportar CSV</button></div></div><div class="cards"><div class="card"><span>Entradas</span><strong id="relEntradas">R$ 0,00</strong></div><div class="card"><span>Saídas</span><strong id="relSaidas">R$ 0,00</strong></div><div class="card"><span>Lucro</span><strong id="relLucro">R$ 0,00</strong></div><div class="card"><span>Vendas</span><strong id="relQtd">0</strong></div></div><div class="panel"><h3>Pedidos / vendas finalizadas</h3><div class="table"><table><thead><tr><th>Data</th><th>Cliente</th><th>Pagamento</th><th>Itens</th><th>Total</th><th>Lucro</th></tr></thead><tbody id="relTabela"></tbody></table></div></div></section>
-    </main>
-  </section>
-  <div id="toast" class="toast"></div>
-  <div id="commandModal" class="modal-shell hidden" aria-hidden="true"><div class="modal-backdrop" data-close-modal></div><div class="command-modal"><div class="command-head"><div><span class="eyebrow">PESQUISA GLOBAL</span><h3>Encontre qualquer informação</h3></div><button class="modal-close" data-close-modal>×</button></div><input id="globalSearchInput" class="command-input" placeholder="Busque cliente, pedido, produto, fornecedor..." autocomplete="off"><div id="globalSearchResults" class="command-results"><div class="empty">Digite para pesquisar em todo o ERP.</div></div></div></div>
+
+<div class="module-list-view" data-module-view="produto-list"><div class="panel"><div class="panel-head"><h3>Produtos cadastrados</h3><input id="buscaProduto" placeholder="Buscar..."/></div><div class="table"><table><thead><tr><th>Produto</th><th>Categoria</th><th>Venda</th><th>Custo</th><th>Estoque</th><th>Disponível</th><th>Status</th><th>Ações</th></tr></thead><tbody id="tabelaProdutos"></tbody></table></div></div></div><div class="module-form-view hidden" data-module-view="produto-form"><div class="form-page-head"><button class="back-button module-back-btn" data-module="produto" type="button">← Voltar</button><div><span class="eyebrow">PRODUTOS</span><h2>Novo produto</h2><p>Preencha os dados abaixo e salve para retornar à listagem.</p></div></div><div class="panel"><h3>Cadastro de produto</h3><form class="form-grid" id="produtoForm">
+<input id="produtoId" type="hidden"/><div><label>Nome</label><input id="produtoNome" required=""/></div><div><label>SKU/Código</label><input id="produtoSku"/></div><div><label>Categoria</label><input id="produtoCategoria"/></div><div><label>Preço venda</label><input id="produtoPreco" required="" step="0.01" type="number"/></div><div><label>Custo</label><input id="produtoCusto" step="0.01" type="number"/></div><div><label>Estoque físico</label><input id="produtoEstoque" step="1" type="number"/></div><div><label>Estoque reservado</label><input id="produtoReservado" step="1" type="number" value="0"/></div><div><label>Estoque mínimo</label><input id="produtoMinimo" step="1" type="number" value="0"/></div><div><label>Fornecedor principal</label><select id="produtoFornecedor"></select></div><div><label>Imagem URL</label><input id="produtoImagem"/></div><div><label>Upload imagem</label><input accept="image/*" id="produtoImagemArquivo" type="file"/></div><div><label>Status</label><select id="produtoAtivo"><option value="true">Ativo</option><option value="false">Inativo</option></select></div><div class="full"><label>Descrição</label><textarea id="produtoDescricao"></textarea></div><div class="actions"><button class="btn primary">Salvar</button><button class="btn light" id="gerarDescProduto" type="button">Gerar descrição IA</button><button class="btn light" id="cancelarProduto" type="button">Cancelar</button></div>
+</form></div></div></section>
+<section class="page" id="clientes"><div class="module-page-head"><div><span class="eyebrow">GESTÃO</span><h1>Clientes</h1><p>Consulte e gerencie sua base de clientes.</p></div><button class="btn primary module-new-btn" data-module="cliente" type="button">＋ Novo cliente</button></div><div class="module-list-view" data-module-view="cliente-list"><div class="panel"><h3>Clientes</h3><div class="list" id="listaClientes"></div></div></div><div class="module-form-view hidden" data-module-view="cliente-form"><div class="form-page-head"><button class="back-button module-back-btn" data-module="cliente" type="button">← Voltar</button><div><span class="eyebrow">CLIENTES</span><h2>Novo cliente</h2><p>Preencha os dados abaixo e salve para retornar à listagem.</p></div></div><div class="panel"><h3>Cadastro de cliente</h3><form class="form-grid" id="clienteForm"><input id="clienteId" type="hidden"/><div><label>Nome</label><input id="clienteNome" required=""/></div><div><label>WhatsApp</label><input id="clienteWhatsapp"/></div><div><label>E-mail</label><input id="clienteEmail" type="email"/></div><div><label>CPF/CNPJ</label><input id="clienteDocumento"/></div><div><label>Instagram</label><input id="clienteInstagram"/></div><div><label>Cidade</label><input id="clienteCidade"/></div><div><label>Aniversário</label><input id="clienteAniversario" type="date"/></div><div><label>Como conheceu</label><input id="clienteOrigem"/></div><div class="full"><label>Observação</label><textarea id="clienteObs"></textarea></div><div class="actions"><button class="btn primary">Salvar</button><button class="btn light" id="cancelarCliente" type="button">Cancelar</button></div></form></div></div></section>
+<section class="page" id="fornecedores"><div class="module-page-head"><div><span class="eyebrow">GESTÃO</span><h1>Fornecedores</h1><p>Consulte e gerencie seus fornecedores.</p></div><button class="btn primary module-new-btn" data-module="fornecedor" type="button">＋ Novo fornecedor</button></div><div class="module-list-view" data-module-view="fornecedor-list"><div class="panel"><h3>Fornecedores</h3><div class="list" id="listaFornecedores"></div></div></div><div class="module-form-view hidden" data-module-view="fornecedor-form"><div class="form-page-head"><button class="back-button module-back-btn" data-module="fornecedor" type="button">← Voltar</button><div><span class="eyebrow">FORNECEDORES</span><h2>Novo fornecedor</h2><p>Preencha os dados abaixo e salve para retornar à listagem.</p></div></div><div class="panel"><h3>Cadastro de fornecedor</h3><form class="form-grid" id="fornecedorForm"><input id="fornecedorId" type="hidden"/><div><label>Nome</label><input id="fornecedorNome" required=""/></div><div><label>Contato</label><input id="fornecedorContato"/></div><div><label>WhatsApp</label><input id="fornecedorWhatsapp"/></div><div><label>CNPJ</label><input id="fornecedorCnpj"/></div><div><label>E-mail</label><input id="fornecedorEmail" type="email"/></div><div><label>Prazo entrega</label><input id="fornecedorPrazo"/></div><div><label>Categoria</label><input id="fornecedorCategoria"/></div><div class="full"><label>Produtos fornecidos / observação</label><textarea id="fornecedorObs"></textarea></div><div class="actions"><button class="btn primary">Salvar</button><button class="btn light" id="cancelarFornecedor" type="button">Cancelar</button></div></form></div></div></section>
+<section class="page" id="compras"><div class="module-page-head"><div><span class="eyebrow">GESTÃO</span><h1>Compras</h1><p>Acompanhe as compras e entradas de estoque.</p></div><button class="btn primary module-new-btn" data-module="compra" type="button">＋ Nova compra</button></div><div class="module-list-view" data-module-view="compra-list"><div class="panel"><h3>Compras registradas</h3><div class="list" id="listaCompras"></div></div></div><div class="module-form-view hidden" data-module-view="compra-form"><div class="form-page-head"><button class="back-button module-back-btn" data-module="compra" type="button">← Voltar</button><div><span class="eyebrow">COMPRAS</span><h2>Nova compra</h2><p>Preencha os dados abaixo e salve para retornar à listagem.</p></div></div><div class="panel"><h3>Registrar compra</h3><form class="form-grid" id="compraForm"><div><label>Fornecedor</label><select id="compraFornecedor"></select></div><div><label>Produto do estoque</label><select id="compraProduto"></select></div><div><label>Descrição</label><input id="compraDescricao" required=""/></div><div><label>Quantidade</label><input id="compraQtd" min="1" required="" type="number"/></div><div><label>Valor total</label><input id="compraValor" required="" step="0.01" type="number"/></div><div><label>Data</label><input id="compraData" required="" type="date"/></div><div class="full"><label>Obs</label><textarea id="compraObs"></textarea></div><div class="actions"><button class="btn primary">Salvar compra</button></div></form></div></div></section>
+<section class="page" id="financeiro"><div class="module-page-head"><div><span class="eyebrow">GESTÃO</span><h1>Financeiro</h1><p>Acompanhe contas a pagar e receber.</p></div><button class="btn primary module-new-btn" data-module="financeiro" type="button">＋ Novo lançamento</button></div>
+
+
+
+<div class="module-list-view" data-module-view="financeiro-list"><div class="cards"><div class="card"><span>A receber pendente</span><strong id="finReceber">R$ 0,00</strong></div><div class="card"><span>A pagar pendente</span><strong id="finPagar">R$ 0,00</strong></div><div class="card"><span>Saldo previsto</span><strong id="finSaldo">R$ 0,00</strong></div><div class="card"><span>Vencidas</span><strong id="finVencidas">0</strong></div></div><div class="panel"><h3>Lançamentos</h3><div class="list" id="listaFinanceiro"></div></div></div><div class="module-form-view hidden" data-module-view="financeiro-form"><div class="form-page-head"><button class="back-button module-back-btn" data-module="financeiro" type="button">← Voltar</button><div><span class="eyebrow">FINANCEIRO</span><h2>Novo lançamento</h2><p>Preencha os dados abaixo e salve para retornar à listagem.</p></div></div><div class="panel"><h3>Contas a pagar / receber</h3><form class="form-grid" id="financeiroForm"><input id="financeiroId" type="hidden"/><div><label>Tipo</label><select id="financeiroTipo"><option value="receber">A receber</option><option value="pagar">A pagar</option></select></div><div><label>Descrição</label><input id="financeiroDescricao" required=""/></div><div><label>Cliente/Fornecedor</label><input id="financeiroPessoa"/></div><div><label>Valor</label><input id="financeiroValor" required="" step="0.01" type="number"/></div><div><label>Vencimento</label><input id="financeiroVencimento" required="" type="date"/></div><div><label>Status</label><select id="financeiroStatus"><option>Pendente</option><option>Pago</option><option>Vencido</option></select></div><div class="actions"><button class="btn primary">Salvar lançamento</button><button class="btn light" id="cancelarFinanceiro" type="button">Cancelar</button></div></form></div></div></section>
+<section class="page" id="ia">
+<div class="grid2">
+<div class="panel"><h3>Gerador de textos para produtos</h3><label>Produto ou ideia</label><input id="iaProduto" placeholder="Ex: Caneca personalizada de formatura"/><label>Detalhes</label><textarea id="iaDetalhes" placeholder="Cores, público, ocasião, diferencial..."></textarea><div class="actions"><button class="btn primary" id="iaGerar">Gerar textos</button></div><div class="ia-box empty" id="iaResultado">O texto gerado aparecerá aqui.</div></div>
+<div class="panel"><h3>Orçamento rápido para WhatsApp</h3><label>Pedido do cliente</label><textarea id="orcamentoTexto" placeholder="Ex: Cliente quer 35 canecas para formatura, entrega em 10 dias..."></textarea><label>WhatsApp do cliente</label><input id="orcamentoZap" placeholder="32999999999"/><div class="actions"><button class="btn primary" id="gerarOrcamento">Gerar orçamento</button><button class="btn light" id="abrirWhats">Abrir WhatsApp</button></div><div class="ia-box empty" id="orcamentoResultado">O orçamento aparecerá aqui.</div></div>
+</div>
+</section>
+<section class="page admin-only" id="admin">
+<div class="grid2">
+<div class="panel">
+<h3>Criar usuários do sistema</h3>
+<p class="hint">O administrador fixo é <b>canecasdelrei@gmail.com</b>. Use esta área para criar vendedoras e outros acessos.</p>
+<form class="form-grid" id="usuarioForm">
+<div><label>Nome</label><input id="usuarioNome" placeholder="Ex.: Vendedora 1"/></div>
+<div><label>E-mail</label><input id="usuarioEmail" required="" type="email"/></div>
+<div><label>Senha inicial</label><input id="usuarioSenha" minlength="6" required="" type="password"/></div>
+<div><label>Perfil</label><select id="usuarioPerfil"><option value="vendedora">Vendedora</option><option value="admin">Administrador</option></select></div>
+<div class="actions"><button class="btn primary">Criar usuário</button></div>
+</form>
+<div class="list" id="listaUsuarios"></div>
+</div>
+<div class="panel">
+<h3>Limpeza de testes</h3>
+<p class="hint">Use apenas para apagar lançamentos criados em teste. Escolha uma data para evitar apagar dados reais por engano.</p>
+<div class="form-grid">
+<div><label>Data</label><input id="limpezaData" type="date"/></div>
+<div class="actions"><button class="btn danger" id="apagarCaixaDia" type="button">Apagar caixa/vendas e entradas da data</button></div>
+<div class="actions"><button class="btn danger" id="apagarRecebimentosDia" type="button">Apagar recebimentos da data</button></div>
+<div class="actions"><button class="btn danger" id="apagarPedidosTeste" type="button">Apagar pedidos cancelados/teste</button></div>
+</div>
+<p class="hint"><b>Caixa/vendas e entradas da data</b> remove vendas finalizadas e os recebimentos pagos daquele dia, para o Dashboard zerar corretamente. <b>Recebimentos</b> remove apenas entradas financeiras pagas naquela data. Pedidos cancelados/teste remove pedidos com status Cancelado ou observação contendo “teste”.</p>
+</div>
+</div>
+</section>
+<section class="page admin-only" id="relatorios"><div class="panel"><h3>Relatório por período</h3><div class="filters"><div><label>Início</label><input id="relInicio" type="date"/></div><div><label>Fim</label><input id="relFim" type="date"/></div><button class="btn primary" id="gerarRelatorio">Gerar</button><button class="btn light" id="exportarCSV">Exportar CSV</button></div></div><div class="cards"><div class="card"><span>Entradas</span><strong id="relEntradas">R$ 0,00</strong></div><div class="card"><span>Saídas</span><strong id="relSaidas">R$ 0,00</strong></div><div class="card"><span>Lucro</span><strong id="relLucro">R$ 0,00</strong></div><div class="card"><span>Vendas</span><strong id="relQtd">0</strong></div></div><div class="panel"><h3>Pedidos / vendas finalizadas</h3><div class="table"><table><thead><tr><th>Data</th><th>Cliente</th><th>Pagamento</th><th>Itens</th><th>Total</th><th>Lucro</th></tr></thead><tbody id="relTabela"></tbody></table></div></div></section>
+</main>
+</section>
+<div class="toast" id="toast"></div>
+<div aria-hidden="true" class="modal-shell hidden" id="commandModal"><div class="modal-backdrop" data-close-modal=""></div><div class="command-modal"><div class="command-head"><div><span class="eyebrow">PESQUISA GLOBAL</span><h3>Encontre qualquer informação</h3></div><button class="modal-close" data-close-modal="">×</button></div><input autocomplete="off" class="command-input" id="globalSearchInput" placeholder="Busque cliente, pedido, produto, fornecedor..."/><div class="command-results" id="globalSearchResults"><div class="empty">Digite para pesquisar em todo o ERP.</div></div></div></div>
 </body>
 </html>
