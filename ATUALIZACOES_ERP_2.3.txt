@@ -1,0 +1,10 @@
+ERP 2.3 - Produção Premium
+
+- Kanban redesenhado conforme o protótipo aprovado.
+- Cabeçalho, abas, filtros e cards compactos.
+- Cores próprias para cada etapa.
+- Cards com número, prazo, responsável, tipo e progresso.
+- Atalhos de Produção no menu lateral.
+- Colunas com rolagem interna e altura controlada.
+- Visual responsivo para desktop e celular.
+- Mantidas as integrações Firebase e regras existentes.

@@ -119,10 +119,41 @@ function renderKanban(){
   if($('countAtrasados'))$('countAtrasados').textContent=atrasados.length;
   if($('countProntos'))$('countProntos').textContent=prontos.length;
   if($('countFinalizados'))$('countFinalizados').textContent=finalizados.length;
+
+  const responsaveis=[...new Set(ativos.map(p=>p.responsavel||p.criadoPor||'Não atribuído'))].sort();
+  const respSelect=$('filtroResponsavelProducao');
+  if(respSelect){const atual=respSelect.value;respSelect.innerHTML='<option value="todos">Responsável</option>'+responsaveis.map(r=>`<option>${r}</option>`).join('');respSelect.value=[...respSelect.options].some(o=>o.value===atual)?atual:'todos'}
+  const tipos=[...new Set(ativos.flatMap(p=>itensDoPedido(p).map(i=>i.nome||i.produtoNome).filter(Boolean)))].sort();
+  const tipoSelect=$('filtroProdutoProducao');
+  if(tipoSelect){const atual=tipoSelect.value;tipoSelect.innerHTML='<option value="todos">Tipo de produto</option>'+tipos.map(t=>`<option>${t}</option>`).join('');tipoSelect.value=[...tipoSelect.options].some(o=>o.value===atual)?atual:'todos'}
+
   const filtered=ativos.filter(productionMatches).sort((a,b)=>(a.entrega||'9999').localeCompare(b.entrega||'9999'));
+  const stageMeta={
+    'Orçamento':{number:'1.',cls:'stage-budget'},
+    'Pedido aprovado':{number:'2.',cls:'stage-approved'},
+    'Arte em criação':{number:'3.',cls:'stage-art'},
+    'Aguardando aprovação':{number:'4.',cls:'stage-waiting'},
+    'Produção':{number:'5.',cls:'stage-production'}
+  };
   if($('kanban'))$('kanban').innerHTML=productionActiveStatuses.map(st=>{
-    const cards=filtered.filter(p=>p.status===st);
-    return `<div class="kanban-col" data-status="${st}"><div class="kanban-col-head"><h3>${st}</h3><span class="kanban-count">${cards.length}</span></div><div class="kanban-cards">${cards.map(p=>{const saldo=p.saldo??Math.max(0,(+p.valor||0)-(+p.sinal||0));return `<div class="kanban-card" draggable="true" data-pedido-id="${p.id}"><div class="kanban-card-top"><b>${p.clienteNome||'Cliente'}</b>${dueLabel(p)}</div><small>${pedidoProdutosTexto(p)||'Sem produtos'}</small><small>${fmt(p.valor)} • Saldo ${fmt(saldo)}</small><small>${p.pagamento||'Pagamento pendente'}</small><select aria-label="Alterar etapa" onchange="movePedido('${p.id}',this.value)">${[...productionActiveStatuses,'Pronto','Cancelado'].map(x=>`<option ${x===p.status?'selected':''}>${x}</option>`).join('')}</select><div class="card-actions"><button class="btn light" onclick="editPedido('${p.id}')">Abrir</button>${saldo>0?`<button class="btn goldbtn" onclick="registrarPagamentoRapido('${p.id}')">Receber</button>`:''}</div></div>`}).join('')||'<div class="empty">Nenhum pedido nesta etapa.</div>'}</div></div>`;
+    const cards=filtered.filter(p=>p.status===st),meta=stageMeta[st]||{number:'',cls:''};
+    return `<div class="kanban-col ${meta.cls}" data-status="${st}"><div class="kanban-col-head"><h3>${meta.number} ${st}</h3><span class="kanban-count">${cards.length}</span></div><div class="kanban-cards">${cards.map(p=>{
+      const saldo=p.saldo??Math.max(0,(+p.valor||0)-(+p.sinal||0));
+      const numero=String(p.numero||p.codigo||p.id||'').replace(/\D/g,'').slice(-4)||String((state.pedidos.indexOf(p)+1)).padStart(4,'0');
+      const responsavel=p.responsavel||p.criadoPor||$('userNameTop')?.textContent||'Equipe';
+      const initials=responsavel.split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+      const tipo=(itensDoPedido(p)[0]?.categoria||p.tipo||'Personalizado').replace('personalizado','Personalizado').replace('pronto','Produto pronto');
+      const progresso=st==='Produção'?Math.max(20,Math.min(90,+p.progresso||50)):0;
+      return `<div class="kanban-card ${p.entrega&&p.entrega<hoje()?'is-overdue':''}" draggable="true" data-pedido-id="${p.id}" onclick="if(!event.target.closest('button,select'))editPedido('${p.id}')">
+        <div class="kanban-card-top"><b>#${numero}</b>${dueLabel(p)}</div>
+        <h4>${p.clienteNome||'Cliente não informado'}</h4>
+        <p>${pedidoProdutosTexto(p)||'Sem produtos cadastrados'}</p>
+        <small class="card-total">Total: ${fmt(p.valor)}</small>
+        <div class="card-owner"><span>${initials}</span><small>${responsavel}</small></div>
+        <div class="card-footer"><span class="product-chip">${tipo}</span>${st==='Aguardando aprovação'?'<em>◷ Aguardando cliente</em>':''}</div>
+        ${st==='Produção'?`<div class="production-progress"><small>Produção ${progresso}%</small><div><i style="width:${progresso}%"></i></div></div>`:''}
+        <div class="kanban-card-controls"><select aria-label="Alterar etapa" onchange="movePedido('${p.id}',this.value)">${[...productionActiveStatuses,'Pronto','Cancelado'].map(x=>`<option ${x===p.status?'selected':''}>${x}</option>`).join('')}</select>${saldo>0?`<button class="mini-pay" onclick="event.stopPropagation();registrarPagamentoRapido('${p.id}')">Receber</button>`:''}</div>
+      </div>`}).join('')||'<div class="kanban-empty">Nenhum pedido nesta etapa.</div>'}<button class="add-card-button" type="button" onclick="document.getElementById('novoPedidoProducao').click()">＋ &nbsp; Adicionar cartão</button></div></div>`;
   }).join('');
   if($('listaAtrasados'))$('listaAtrasados').innerHTML=atrasados.filter(productionMatches).sort((a,b)=>(a.entrega||'').localeCompare(b.entrega||'')).map(p=>productionListCard(p,'atrasados')).join('')||'<div class="empty">Nenhum pedido atrasado.</div>';
   if($('listaProntos'))$('listaProntos').innerHTML=prontos.filter(productionMatches).sort((a,b)=>(a.entrega||'9999').localeCompare(b.entrega||'9999')).map(p=>productionListCard(p,'prontos')).join('')||'<div class="empty">Nenhum pedido aguardando entrega.</div>';
@@ -265,6 +296,8 @@ function setProductionView(view){
   document.querySelectorAll('[data-production-panel]').forEach(panel=>panel.classList.toggle('hidden',panel.dataset.productionPanel!==view));
 }
 document.querySelectorAll('.production-tab').forEach(btn=>btn.addEventListener('click',()=>setProductionView(btn.dataset.productionView)));
+document.querySelectorAll('[data-production-open]').forEach(btn=>btn.addEventListener('click',()=>{goToPage('producao');setProductionView(btn.dataset.productionOpen);document.querySelectorAll('[data-production-open]').forEach(x=>x.classList.toggle('active',x===btn))}));
+['filtroResponsavelProducao','filtroProdutoProducao'].forEach(id=>$(id)?.addEventListener('change',renderKanban));
 $('buscaProducao')?.addEventListener('input',renderKanban);
 $('filtroPrazoProducao')?.addEventListener('change',renderKanban);
 $('filtroFinalizados')?.addEventListener('change',renderKanban);
