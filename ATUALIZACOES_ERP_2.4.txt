@@ -1,0 +1,11 @@
+ERP 2.4 - Caixa e Recebimentos
+- Abertura e fechamento de caixa com saldo inicial, esperado, contado e diferença.
+- Sangria, suprimento e despesas de caixa.
+- Compras pendentes/pagas, parcelas, vencimento e forma de pagamento.
+- Recebimentos parciais com bloqueio de valor acima do saldo.
+- Estorno preservando histórico.
+- Bloqueio de exclusão de lançamentos vinculados a pedidos/compras.
+- Padronização das formas de pagamento.
+- Datas separadas para vencimento, pagamento e competência.
+- Dashboard e relatórios passam a usar pagamentos realizados.
+- Lucro líquido não desconta compras de estoque duas vezes.
