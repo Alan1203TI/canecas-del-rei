@@ -83,7 +83,67 @@ window.printOP=id=>{const p=state.pedidos.find(x=>x.id===id);const saldo=p.saldo
 async function finalizarVendaDoPedido(p,metodo){if(!p||p.vendaFinalizada)return;const itens=itensDoPedido(p);const custoTotal=itens.reduce((s,i)=>s+(+i.custo||0)*(+i.quantidade||0),0);await addDoc(collection(db,'vendas'),{data:hoje(),mes:mes(),clienteId:p.clienteId,clienteNome:p.clienteNome,pagamento:metodo||p.metodoRestante||'Pix',desconto:+p.desconto||0,subtotal:+(p.subtotal??p.valor)||0,total:+p.valor||0,custoTotal,lucro:(+p.valor||0)-custoTotal,obs:p.obs||'',itens,origem:'pedido',pedidoId:p.id,criadoEm:new Date().toISOString(),timestamp:serverTimestamp()});for(const i of itens){const prod=state.produtos.find(x=>x.id===i.produtoId);if(prod?.id){const novoEstoque=Math.max(0,(+prod.estoque||0)-(+i.quantidade||0));const novoReservado=Math.max(0,(+prod.reservado||0)-(+i.quantidade||0));await updateDoc(doc(db,'produtos',prod.id),{estoque:novoEstoque,reservado:novoReservado,atualizadoEm:new Date().toISOString()})}}await updateDoc(doc(db,'pedidos',p.id),{vendaFinalizada:true,status:'Entregue',pagamento:'Pago',saldo:0,atualizadoEm:new Date().toISOString()})}
 window.registrarPagamentoPedido=async(id)=>{const p=state.pedidos.find(x=>x.id===id);if(!p)return;const valor=+$('payValor_'+id)?.value||0,metodo=$('payMetodo_'+id)?.value||p.metodoRestante||'Pix';if(valor<=0)return toast('Informe o valor recebido.');const total=+p.valor||0,pagoAtual=+p.sinal||0,novoPago=Math.min(total,pagoAtual+valor),novoSaldo=Math.max(0,total-novoPago),novoStatusPg=novoSaldo===0?'Pago':'Sinal pago';await addDoc(collection(db,'financeiro'),{tipo:'receber',descricao:'Pagamento do pedido: '+pedidoProdutosTexto(p),pessoa:p.clienteNome,metodo,valor,vencimento:hoje(),status:'Pago',data:hoje(),pedidoId:id,criadoEm:new Date().toISOString(),timestamp:serverTimestamp()});await updateDoc(doc(db,'pedidos',id),{sinal:novoPago,saldo:novoSaldo,pagamento:novoStatusPg,metodoRestante:metodo,atualizadoEm:new Date().toISOString()});toast('Pagamento registrado');refresh()};
 window.receberRestanteEFinalizar=async(id)=>{const p=state.pedidos.find(x=>x.id===id);if(!p)return;const saldo=p.saldo??Math.max(0,(+p.valor||0)-(+p.sinal||0));let metodo=prompt('Forma de pagamento do restante (Pix, Dinheiro, Crédito, Débito):',p.metodoRestante||'Pix')||p.metodoRestante||'Pix';let valor=saldo>0?Number(String(prompt('Valor recebido agora:',saldo.toFixed(2))||'0').replace(',','.')):0;if(saldo>0){if(!valor||valor<=0)return toast('Valor não informado.');await addDoc(collection(db,'financeiro'),{tipo:'receber',descricao:'Saldo final do pedido: '+pedidoProdutosTexto(p),pessoa:p.clienteNome,metodo,valor,vencimento:hoje(),status:'Pago',data:hoje(),pedidoId:id,criadoEm:new Date().toISOString(),timestamp:serverTimestamp()})}const novoPago=Math.min(+p.valor||0,(+p.sinal||0)+(valor||0));const novoSaldo=Math.max(0,(+p.valor||0)-novoPago);await updateDoc(doc(db,'pedidos',id),{sinal:novoPago,saldo:novoSaldo,pagamento:novoSaldo===0?'Pago':'Sinal pago',metodoRestante:metodo,status:novoSaldo===0?'Entregue':(p.status||'Pronto'),atualizadoEm:new Date().toISOString()});const atualizado={...p,sinal:novoPago,saldo:novoSaldo,metodoRestante:metodo,status:novoSaldo===0?'Entregue':p.status};if(novoSaldo===0)await finalizarVendaDoPedido(atualizado,metodo);toast('Pedido atualizado');refresh()};
-function renderKanban(){const sts=['Orçamento','Pedido aprovado','Arte em criação','Aguardando aprovação','Produção','Pronto','Entregue'];$('kanban').innerHTML=sts.map(st=>`<div class="kanban-col"><h3>${st}</h3>${state.pedidos.filter(p=>p.status===st).map(p=>{const saldo=p.saldo??Math.max(0,(+p.valor||0)-(+p.sinal||0));return `<div class="kanban-card"><b>${p.clienteNome}</b><small>${p.tipo==='pronto'?'Pronto/venda rápida':'Personalizado'} • ${pedidoProdutosTexto(p)}</small><small>Total: ${fmt(p.valor)} | Pago: ${fmt(p.sinal||0)} | Saldo: ${fmt(saldo)}</small><small>Entrega: ${p.entrega||'-'} | Pgto: ${p.pagamento||'-'}</small><select onchange="movePedido('${p.id}',this.value)">${sts.map(s=>`<option ${s===p.status?'selected':''}>${s}</option>`).join('')}<option ${p.status==='Cancelado'?'selected':''}>Cancelado</option></select>${saldo>0?`<div class="kanban-pay"><input id="payValor_${p.id}" type="number" min="0" step="0.01" placeholder="Valor recebido"><select id="payMetodo_${p.id}"><option ${p.metodoRestante==='Pix'?'selected':''}>Pix</option><option ${p.metodoRestante==='Dinheiro'?'selected':''}>Dinheiro</option><option ${p.metodoRestante==='Cartão de crédito'?'selected':''}>Cartão de crédito</option><option ${p.metodoRestante==='Cartão de débito'?'selected':''}>Cartão de débito</option><option ${p.metodoRestante==='Boleto'?'selected':''}>Boleto</option><option ${p.metodoRestante==='Transferência'?'selected':''}>Transferência</option></select><button class="btn light" onclick="registrarPagamentoPedido('${p.id}')">Registrar pagamento</button><button class="btn goldbtn" onclick="receberRestanteEFinalizar('${p.id}')">Receber saldo e finalizar</button></div>`:`${p.vendaFinalizada?'<span class="badge green">Venda finalizada</span>':'<button class="btn goldbtn" onclick="receberRestanteEFinalizar(\''+p.id+'\')">Finalizar venda</button>'}`}</div>`}).join('')||'<div class="empty">Vazio</div>'}</div>`).join('')}
+let productionView='ativos';
+const productionActiveStatuses=['Orçamento','Pedido aprovado','Arte em criação','Aguardando aprovação','Produção'];
+function productionMatches(p){
+  const q=($('buscaProducao')?.value||'').trim().toLowerCase();
+  const prazo=$('filtroPrazoProducao')?.value||'todos';
+  const text=[p.clienteNome,p.produtoNome,p.obs,pedidoProdutosTexto(p)].join(' ').toLowerCase();
+  if(q&&!text.includes(q))return false;
+  if(prazo==='hoje'&&p.entrega!==hoje())return false;
+  if(prazo==='sem-data'&&p.entrega)return false;
+  if(prazo==='semana'){
+    if(!p.entrega)return false;
+    const limite=new Date();limite.setDate(limite.getDate()+7);
+    if(p.entrega<hoje()||p.entrega>dataLocal(limite))return false;
+  }
+  return true;
+}
+function dueLabel(p){
+  if(!p.entrega)return '<span class="due">Sem prazo</span>';
+  const overdue=p.entrega<hoje()&&!['Entregue','Cancelado'].includes(p.status);
+  const label=p.entrega===hoje()?'Hoje':dateBR.format(new Date(p.entrega+'T00:00:00'));
+  return `<span class="due ${overdue?'overdue':''}">${overdue?'Atrasado • ':''}${label}</span>`;
+}
+function productionListCard(p,kind){
+  const saldo=p.saldo??Math.max(0,(+p.valor||0)-(+p.sinal||0));
+  const overdue=p.entrega&&p.entrega<hoje()&&!['Entregue','Cancelado'].includes(p.status);
+  return `<div class="production-list-card ${overdue?'overdue':''}"><div><h4>${p.clienteNome||'Cliente não informado'}</h4><small>${pedidoProdutosTexto(p)||'Sem produtos'}</small><small>Status: <b>${p.status}</b> • Entrega: ${p.entrega?dateBR.format(new Date(p.entrega+'T00:00:00')):'Sem data'} • Total: ${fmt(p.valor)}</small><small>Pago: ${fmt(p.sinal||0)} • Saldo: ${fmt(saldo)} • ${p.pagamento||'Pagamento não informado'}</small></div><div class="production-list-actions"><button class="btn light" onclick="editPedido('${p.id}')">Abrir pedido</button>${kind==='prontos'?`<button class="btn goldbtn" onclick="receberRestanteEFinalizar('${p.id}')">Entregar / finalizar</button>`:`<button class="btn primary" onclick="movePedido('${p.id}','Produção')">Mover para produção</button>`}</div></div>`;
+}
+function renderKanban(){
+  const ativos=state.pedidos.filter(p=>productionActiveStatuses.includes(p.status));
+  const atrasados=state.pedidos.filter(p=>p.entrega&&p.entrega<hoje()&&!['Entregue','Cancelado'].includes(p.status));
+  const prontos=state.pedidos.filter(p=>p.status==='Pronto');
+  const finalizados=state.pedidos.filter(p=>['Entregue','Cancelado'].includes(p.status));
+  if($('countAtivos'))$('countAtivos').textContent=ativos.length;
+  if($('countAtrasados'))$('countAtrasados').textContent=atrasados.length;
+  if($('countProntos'))$('countProntos').textContent=prontos.length;
+  if($('countFinalizados'))$('countFinalizados').textContent=finalizados.length;
+  const filtered=ativos.filter(productionMatches).sort((a,b)=>(a.entrega||'9999').localeCompare(b.entrega||'9999'));
+  if($('kanban'))$('kanban').innerHTML=productionActiveStatuses.map(st=>{
+    const cards=filtered.filter(p=>p.status===st);
+    return `<div class="kanban-col" data-status="${st}"><div class="kanban-col-head"><h3>${st}</h3><span class="kanban-count">${cards.length}</span></div><div class="kanban-cards">${cards.map(p=>{const saldo=p.saldo??Math.max(0,(+p.valor||0)-(+p.sinal||0));return `<div class="kanban-card" draggable="true" data-pedido-id="${p.id}"><div class="kanban-card-top"><b>${p.clienteNome||'Cliente'}</b>${dueLabel(p)}</div><small>${pedidoProdutosTexto(p)||'Sem produtos'}</small><small>${fmt(p.valor)} • Saldo ${fmt(saldo)}</small><small>${p.pagamento||'Pagamento pendente'}</small><select aria-label="Alterar etapa" onchange="movePedido('${p.id}',this.value)">${[...productionActiveStatuses,'Pronto','Cancelado'].map(x=>`<option ${x===p.status?'selected':''}>${x}</option>`).join('')}</select><div class="card-actions"><button class="btn light" onclick="editPedido('${p.id}')">Abrir</button>${saldo>0?`<button class="btn goldbtn" onclick="registrarPagamentoRapido('${p.id}')">Receber</button>`:''}</div></div>`}).join('')||'<div class="empty">Nenhum pedido nesta etapa.</div>'}</div></div>`;
+  }).join('');
+  if($('listaAtrasados'))$('listaAtrasados').innerHTML=atrasados.filter(productionMatches).sort((a,b)=>(a.entrega||'').localeCompare(b.entrega||'')).map(p=>productionListCard(p,'atrasados')).join('')||'<div class="empty">Nenhum pedido atrasado.</div>';
+  if($('listaProntos'))$('listaProntos').innerHTML=prontos.filter(productionMatches).sort((a,b)=>(a.entrega||'9999').localeCompare(b.entrega||'9999')).map(p=>productionListCard(p,'prontos')).join('')||'<div class="empty">Nenhum pedido aguardando entrega.</div>';
+  const filtro=$('filtroFinalizados')?.value||'todos';
+  const hist=finalizados.filter(p=>(filtro==='todos'||p.status===filtro)&&productionMatches(p)).sort((a,b)=>(b.atualizadoEm||'').localeCompare(a.atualizadoEm||''));
+  if($('tabelaFinalizados'))$('tabelaFinalizados').innerHTML=hist.length?hist.map(p=>`<tr><td><b>${p.clienteNome||'-'}</b></td><td>${pedidoProdutosTexto(p)||'-'}</td><td>${p.entrega?dateBR.format(new Date(p.entrega+'T00:00:00')):'-'}</td><td>${p.atualizadoEm?dateBR.format(new Date(p.atualizadoEm)):'-'}</td><td>${fmt(p.valor)}</td><td>${p.pagamento||'-'}</td><td><span class="finalized-status ${p.status.toLowerCase()}">${p.status}</span></td><td><button class="btn light" onclick="editPedido('${p.id}')">Visualizar</button> <button class="btn light" onclick="reabrirPedido('${p.id}')">Reabrir</button></td></tr>`).join(''):'<tr><td colspan="8">Nenhum pedido finalizado.</td></tr>';
+  setupKanbanDragDrop();
+}
+function setupKanbanDragDrop(){
+  document.querySelectorAll('.kanban-card[draggable="true"]').forEach(card=>{
+    card.addEventListener('dragstart',e=>{card.classList.add('dragging');e.dataTransfer.setData('text/plain',card.dataset.pedidoId)});
+    card.addEventListener('dragend',()=>card.classList.remove('dragging'));
+  });
+  document.querySelectorAll('.kanban-col[data-status]').forEach(col=>{
+    col.addEventListener('dragover',e=>{e.preventDefault();col.classList.add('drag-over')});
+    col.addEventListener('dragleave',()=>col.classList.remove('drag-over'));
+    col.addEventListener('drop',e=>{e.preventDefault();col.classList.remove('drag-over');const id=e.dataTransfer.getData('text/plain');if(id)window.movePedido(id,col.dataset.status)});
+  });
+}
+window.registrarPagamentoRapido=id=>{const p=state.pedidos.find(x=>x.id===id);if(!p)return;const saldo=p.saldo??Math.max(0,(+p.valor||0)-(+p.sinal||0));const valor=prompt('Valor recebido:',saldo.toFixed(2));if(valor===null)return;const metodo=prompt('Forma de pagamento:',p.metodoRestante||'Pix');const temp=document.createElement('div');temp.innerHTML=`<input id="payValor_${id}" value="${String(valor).replace(',','.')}"><select id="payMetodo_${id}"><option>${metodo||'Pix'}</option></select>`;temp.style.display='none';document.body.appendChild(temp);window.registrarPagamentoPedido(id).finally(()=>temp.remove())};
+window.reabrirPedido=async id=>{if(!confirm('Reabrir este pedido e enviá-lo para Produção?'))return;await updateDoc(doc(db,'pedidos',id),{status:'Produção',atualizadoEm:new Date().toISOString()});toast('Pedido reaberto');refresh()};
 window.movePedido=async(id,status)=>{const p=state.pedidos.find(x=>x.id===id);if(status==='Entregue'&&p&&!(p.vendaFinalizada)){const saldo=p.saldo??Math.max(0,(+p.valor||0)-(+p.sinal||0));if(saldo>0){toast('Receba o saldo restante antes de entregar.');renderKanban();return}await finalizarVendaDoPedido(p,p.metodoRestante||'Pix');toast('Venda finalizada');refresh();return}await updateDoc(doc(db,'pedidos',id),{status,atualizadoEm:new Date().toISOString()});toast('Status atualizado');refresh()};
 
 $('financeiroForm').addEventListener('submit',async e=>{e.preventDefault();const id=$('financeiroId').value,f={tipo:$('financeiroTipo').value,descricao:$('financeiroDescricao').value.trim(),pessoa:$('financeiroPessoa').value.trim(),valor:+$('financeiroValor').value||0,vencimento:$('financeiroVencimento').value,status:$('financeiroStatus').value,data:hoje(),atualizadoEm:new Date().toISOString()}; if(!f.descricao||f.valor<=0||!f.vencimento)return toast('Preencha o lançamento.'); if(id) await updateDoc(doc(db,'financeiro',id),f); else await addDoc(collection(db,'financeiro'),{...f,criadoEm:new Date().toISOString(),timestamp:serverTimestamp()}); e.target.reset();$('financeiroId').value='';toast('Financeiro salvo');refresh()});
@@ -197,3 +257,16 @@ const _editFornecedor=window.editFornecedor; window.editFornecedor=id=>{_editFor
   const m=id.replace('Form','').replace('pedido','pedido').replace('produto','produto').replace('cliente','cliente').replace('fornecedor','fornecedor').replace('compra','compra').replace('financeiro','financeiro');
   form.addEventListener('submit',()=>setTimeout(()=>showModuleList(m),700));
 });
+
+// ERP 2.2 - controles das áreas de produção
+function setProductionView(view){
+  productionView=view;
+  document.querySelectorAll('.production-tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.productionView===view));
+  document.querySelectorAll('[data-production-panel]').forEach(panel=>panel.classList.toggle('hidden',panel.dataset.productionPanel!==view));
+}
+document.querySelectorAll('.production-tab').forEach(btn=>btn.addEventListener('click',()=>setProductionView(btn.dataset.productionView)));
+$('buscaProducao')?.addEventListener('input',renderKanban);
+$('filtroPrazoProducao')?.addEventListener('change',renderKanban);
+$('filtroFinalizados')?.addEventListener('change',renderKanban);
+$('limparFiltrosProducao')?.addEventListener('click',()=>{if($('buscaProducao'))$('buscaProducao').value='';if($('filtroPrazoProducao'))$('filtroPrazoProducao').value='todos';if($('filtroFinalizados'))$('filtroFinalizados').value='todos';renderKanban()});
+$('novoPedidoProducao')?.addEventListener('click',()=>{goToPage('pedidos');setTimeout(()=>{document.querySelector('.module-new-btn[data-module="pedido"]')?.click()},0)});

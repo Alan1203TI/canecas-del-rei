@@ -1,0 +1,23 @@
+CANECAS DEL REI ERP 2.2 — PRODUÇÃO FUNCIONAL
+
+Alterações realizadas:
+- Kanban exibe somente pedidos ativos.
+- Pedidos prontos foram movidos para uma aba própria.
+- Pedidos entregues e cancelados ficam no histórico em tabela.
+- Colunas do Kanban possuem altura fixa e rolagem interna.
+- Contadores em todas as etapas e abas.
+- Movimentação por arrastar e soltar entre as etapas.
+- Continuidade do seletor de etapa em cada cartão.
+- Filtro por texto e prazo de entrega.
+- Aba específica para pedidos atrasados.
+- Pedidos atrasados recebem destaque visual.
+- Botão para abrir o pedido, registrar pagamento e finalizar entrega.
+- Possibilidade de reabrir um pedido finalizado sem duplicar a venda.
+- Botão Novo pedido dentro da área de produção.
+
+Estrutura da produção:
+1. Em andamento: Orçamento, Pedido aprovado, Arte em criação,
+   Aguardando aprovação e Produção.
+2. Atrasados: pedidos ativos ou prontos com prazo vencido.
+3. Prontos para entrega: pedidos aguardando retirada ou envio.
+4. Finalizados: pedidos entregues ou cancelados em formato de tabela.
