@@ -124,3 +124,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.innerWidth <= 1050 && sidebar?.classList.contains('open') && !sidebar.contains(event.target) && !toggle?.contains(event.target)) sidebar.classList.remove('open');
   });
 });
+
+
+// Recursos profissionais: pesquisa global, central de alertas, atalhos e tema.
+function updateProfessionalUI(){
+  const profile=state.usuarios.find(u=>(u.email||'').toLowerCase()===(state.user?.email||'').toLowerCase());
+  if($('userNameTop')) $('userNameTop').textContent=profile?.nome||state.user?.email?.split('@')[0]||'Usuário';
+  if($('userRoleTop')) $('userRoleTop').textContent=isAdmin()?'Administrador':'Vendedora';
+  const atrasados=state.pedidos.filter(p=>p.entrega&&p.entrega<hoje()&&!['Entregue','Cancelado'].includes(p.status)).length;
+  const criticos=state.produtos.filter(p=>(+p.estoque||0)<=(+p.minimo||0)).length;
+  const vencidas=state.financeiro.filter(f=>f.status!=='Pago'&&f.vencimento&&f.vencimento<hoje()).length;
+  if($('notificationCount')) $('notificationCount').textContent=atrasados+criticos+vencidas;
+}
+const originalRenderAll=renderAll;
+renderAll=function(){originalRenderAll();updateProfessionalUI()};
+function goToPage(page){const button=document.querySelector(`.nav[data-page="${page}"]`);if(button&&button.style.display!=='none')button.click()}
+document.querySelectorAll('.quick-action').forEach(btn=>btn.addEventListener('click',()=>goToPage(btn.dataset.go)));
+const modal=$('commandModal'), searchInput=$('globalSearchInput'), searchResults=$('globalSearchResults');
+function openSearch(){modal.classList.remove('hidden');modal.setAttribute('aria-hidden','false');setTimeout(()=>searchInput.focus(),30)}
+function closeSearch(){modal.classList.add('hidden');modal.setAttribute('aria-hidden','true');searchInput.value='';searchResults.innerHTML='<div class="empty">Digite para pesquisar em todo o ERP.</div>'}
+$('globalSearchBtn')?.addEventListener('click',openSearch);document.querySelectorAll('[data-close-modal]').forEach(x=>x.addEventListener('click',closeSearch));
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openSearch()}if(e.key==='Escape'&&!modal.classList.contains('hidden'))closeSearch()});
+searchInput?.addEventListener('input',()=>{const q=searchInput.value.trim().toLowerCase();if(q.length<2){searchResults.innerHTML='<div class="empty">Digite ao menos 2 caracteres.</div>';return}const results=[];state.clientes.filter(x=>[x.nome,x.whatsapp,x.email].join(' ').toLowerCase().includes(q)).slice(0,5).forEach(x=>results.push({type:'Cliente',title:x.nome,detail:x.whatsapp||x.email||'Cadastro de cliente',page:'clientes'}));state.produtos.filter(x=>[x.nome,x.sku,x.categoria].join(' ').toLowerCase().includes(q)).slice(0,5).forEach(x=>results.push({type:'Produto',title:x.nome,detail:`${x.sku||'Sem SKU'} • ${fmt(x.preco)}`,page:'produtos'}));state.pedidos.filter(x=>[x.clienteNome,x.status,x.numero,x.obs].join(' ').toLowerCase().includes(q)).slice(0,6).forEach(x=>results.push({type:'Pedido',title:x.clienteNome||'Pedido',detail:`${x.status||'Sem status'} • ${fmt(x.valor||x.total)}`,page:'pedidos'}));state.fornecedores.filter(x=>[x.nome,x.categoria,x.whatsapp].join(' ').toLowerCase().includes(q)).slice(0,4).forEach(x=>results.push({type:'Fornecedor',title:x.nome,detail:x.categoria||x.whatsapp||'Fornecedor',page:'fornecedores'}));searchResults.innerHTML=results.length?results.map((r,i)=>`<div class="search-result" data-result="${i}"><div><b>${r.title}</b><small>${r.detail}</small></div><span class="search-type">${r.type}</span></div>`).join(''):'<div class="empty">Nenhum resultado encontrado.</div>';searchResults.querySelectorAll('[data-result]').forEach(el=>el.addEventListener('click',()=>{goToPage(results[+el.dataset.result].page);closeSearch()}))});
+$('themeToggle')?.addEventListener('click',()=>{document.body.classList.toggle('dark-mode');localStorage.setItem('erp-theme',document.body.classList.contains('dark-mode')?'dark':'light')});if(localStorage.getItem('erp-theme')==='dark')document.body.classList.add('dark-mode');
+$('notificationBtn')?.addEventListener('click',()=>{const n=+$('notificationCount').textContent||0;toast(n?`${n} alerta(s): verifique entregas, estoque e financeiro.`:'Nenhum alerta crítico no momento.')});

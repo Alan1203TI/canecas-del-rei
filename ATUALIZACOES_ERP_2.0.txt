@@ -1,0 +1,17 @@
+CANECAS DEL REI — ERP 2.0
+
+PRINCIPAIS MELHORIAS
+- Novo painel executivo com visual premium e indicadores em destaque.
+- Cabeçalho profissional com usuário, perfil, alertas e ações rápidas.
+- Pesquisa global de clientes, produtos, pedidos e fornecedores (Ctrl+K).
+- Central de alertas para pedidos atrasados, estoque crítico e contas vencidas.
+- Modo claro e escuro com preferência salva no navegador.
+- Atalhos rápidos para Novo Pedido, Produção e Financeiro.
+- Sidebar, cards, tabelas, formulários, botões e Kanban reformulados.
+- Melhor experiência responsiva para celular, tablet e computador.
+- Tela de login modernizada.
+- Banco Firebase e configurações existentes preservados.
+
+OBSERVAÇÃO
+A atualização mantém a estrutura atual e os dados já cadastrados. Basta publicar os arquivos
+substituindo a versão anterior no mesmo serviço de hospedagem.

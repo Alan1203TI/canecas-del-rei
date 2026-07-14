@@ -46,10 +46,16 @@
     <main class="main">
       <header class="topbar">
         <div class="topbar-title"><button id="menuToggle" class="menu-toggle" type="button" aria-label="Abrir menu">☰</button><div><h2 id="titulo">Dashboard</h2><p id="subtitulo">Resumo geral da Canecas del Rei</p></div></div>
-        <div class="total-dia"><span id="dataHoje"></span><strong id="topHoje">R$ 0,00</strong><small>Entradas de hoje</small></div>
+        <div class="topbar-tools"><button id="globalSearchBtn" class="icon-action" type="button" title="Pesquisa global">⌕</button><button id="themeToggle" class="icon-action" type="button" title="Alternar tema">◐</button><button id="notificationBtn" class="icon-action notification-action" type="button" title="Central de alertas">♢<span id="notificationCount">0</span></button><div class="user-chip"><span class="user-avatar">CD</span><div><b id="userNameTop">Usuário</b><small id="userRoleTop">Acesso</small></div></div>
+        <div class="total-dia"><span id="dataHoje"></span><strong id="topHoje">R$ 0,00</strong><small>Entradas de hoje</small></div></div>
       </header>
 
       <section id="dashboard" class="page active">
+        <div class="dashboard-welcome">
+          <div><span class="eyebrow">CENTRAL DE OPERAÇÕES</span><h1>Visão completa do negócio</h1><p>Acompanhe vendas, produção, entregas, estoque e financeiro em um único lugar.</p></div>
+          <div class="quick-actions"><button class="quick-action" data-go="pedidos"><span>＋</span><b>Novo pedido</b><small>Criar orçamento ou venda</small></button><button class="quick-action" data-go="producao"><span>◇</span><b>Ver produção</b><small>Acompanhar andamento</small></button><button class="quick-action admin-only" data-go="financeiro"><span>$</span><b>Financeiro</b><small>Contas e recebimentos</small></button></div>
+        </div>
+        <div class="section-heading"><div><span class="eyebrow">INDICADORES</span><h3>Desempenho em tempo real</h3></div><span class="live-pill"><i></i> Dados atualizados</span></div>
         <div class="cards cards6">
           <div class="card"><span>Entradas hoje</span><strong id="dashHoje">R$ 0,00</strong></div>
           <div class="card"><span>Entradas no mês</span><strong id="dashEntradas">R$ 0,00</strong></div>
@@ -153,5 +159,6 @@
     </main>
   </section>
   <div id="toast" class="toast"></div>
+  <div id="commandModal" class="modal-shell hidden" aria-hidden="true"><div class="modal-backdrop" data-close-modal></div><div class="command-modal"><div class="command-head"><div><span class="eyebrow">PESQUISA GLOBAL</span><h3>Encontre qualquer informação</h3></div><button class="modal-close" data-close-modal>×</button></div><input id="globalSearchInput" class="command-input" placeholder="Busque cliente, pedido, produto, fornecedor..." autocomplete="off"><div id="globalSearchResults" class="command-results"><div class="empty">Digite para pesquisar em todo o ERP.</div></div></div></div>
 </body>
 </html>
