@@ -6,11 +6,51 @@ const money=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}), da
 function dataLocal(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
 const $=id=>document.getElementById(id), hoje=()=>dataLocal(), mes=()=>hoje().slice(0,7), fmt=v=>money.format(Number(v||0));
 let chartDias, chartPag, chartResumo, ultimoOrcamento='';
-function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),3500);if(msg==='Pedido salvo')setTimeout(()=>showModuleList('pedido'),0)}
 async function col(name,ord){try{const q=ord?query(collection(db,name),orderBy(ord,'desc')):collection(db,name);const s=await getDocs(q);return s.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('coleção',name,e);return []}}
 async function refresh(){state.produtos=await col('produtos','criadoEm'); state.clientes=await col('clientes','criadoEm'); state.fornecedores=await col('fornecedores','criadoEm'); state.compras=await col('compras','data'); state.vendas=await col('vendas','criadoEm'); state.pedidos=await col('pedidos','criadoEm'); state.financeiro=await col('financeiro','vencimento'); state.usuarios=await col('usuarios','criadoEm'); aplicarPermissoes(); renderAll()}
 function renderAll(){renderProdutos();renderProdutosVenda();renderClientes();renderFornecedores();renderCompras();popularSelects();renderPedidoItens();renderPedidos();renderKanban();renderFinanceiro();renderUsuarios();dashboard();relatorio();updatePedidoSaldo()}
 function readFileBase64(input, cb){const f=input.files?.[0]; if(!f)return cb(''); const r=new FileReader(); r.onload=()=>cb(r.result); r.readAsDataURL(f)}
+
+// O Firestore limita cada documento a aproximadamente 1 MiB. Redimensionar a
+// prévia antes de salvá-la evita que uma foto grande bloqueie todo o pedido.
+function readImageOptimized(input, cb){
+  const file=input.files?.[0];
+  if(!file)return cb('');
+  if(!file.type.startsWith('image/')){toast('Selecione um arquivo de imagem válido.');input.value='';return}
+  const reader=new FileReader();
+  reader.onerror=()=>toast('Não foi possível ler a imagem selecionada.');
+  reader.onload=()=>{
+    const img=new Image();
+    img.onerror=()=>toast('Não foi possível processar a imagem selecionada.');
+    img.onload=()=>{
+      const maxSide=1200,scale=Math.min(1,maxSide/Math.max(img.width,img.height));
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+      canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+      let value=canvas.toDataURL('image/jpeg',0.72);
+      if(value.length>700000)value=canvas.toDataURL('image/jpeg',0.5);
+      if(value.length>850000){toast('A imagem ainda ficou muito grande. Escolha uma imagem menor.');input.value='';return}
+      cb(value);
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function firebaseErrorMessage(err){
+  const code=String(err?.code||'');
+  if(code.includes('permission-denied'))return 'Sem permissão para gravar. Confira as regras do Firestore.';
+  if(code.includes('unauthenticated'))return 'Sua sessão expirou. Entre novamente no sistema.';
+  if(code.includes('resource-exhausted')||String(err?.message||'').includes('longer than'))return 'O pedido ficou grande demais para o Firebase. Remova ou troque a imagem.';
+  if(code.includes('unavailable'))return 'Firebase indisponível ou sem internet. Tente novamente.';
+  return 'Não foi possível salvar. Tente novamente e confira o console.';
+}
+
+window.addEventListener('unhandledrejection',event=>{
+  console.error('Operação não concluída:',event.reason);
+  toast(firebaseErrorMessage(event.reason));
+});
 
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();try{await signInWithEmailAndPassword(auth,$('email').value.trim(),$('senha').value);toast('Login realizado')}catch(err){toast('Erro no login. Confira e-mail e senha.')}});
 $('sair').addEventListener('click',()=>signOut(auth));
@@ -57,7 +97,7 @@ $('finalizarVenda').onclick=async()=>{if(!state.carrinho.length)return toast('Ad
 
 
 
-$('pedidoImagemArquivo').addEventListener('change',()=>readFileBase64($('pedidoImagemArquivo'),v=>{$('pedidoImagem').value=v;toast('Imagem da arte carregada')})); $('buscaPedido').oninput=renderPedidos;
+$('pedidoImagemArquivo').addEventListener('change',()=>readImageOptimized($('pedidoImagemArquivo'),v=>{$('pedidoImagem').value=v;toast('Imagem da arte otimizada e carregada')})); $('buscaPedido').oninput=renderPedidos;
 function pedidoTotals(){const subtotal=state.pedidoItens.reduce((s,i)=>s+(+i.preco||0)*(+i.quantidade||0),0),desconto=+$('pedidoDesconto').value||0,total=Math.max(0,subtotal-desconto),sinal=Math.min(total,+$('pedidoSinal').value||0),saldo=Math.max(0,total-sinal);return {subtotal,desconto,total,sinal,saldo}}
 function updatePedidoProdutoPreco(){const prod=state.produtos.find(p=>p.id===$('pedidoProduto').value);if($('pedidoPrecoUnit'))$('pedidoPrecoUnit').value=prod?fmt(prod.preco):fmt(0)}
 function updatePedidoSaldo(){const t=pedidoTotals();if($('pedidoSubtotal'))$('pedidoSubtotal').value=fmt(t.subtotal);if($('pedidoValor'))$('pedidoValor').value=fmt(t.total);if($('pedidoSaldo'))$('pedidoSaldo').value=fmt(t.saldo);renderPedidoResumo(t)}
@@ -283,7 +323,7 @@ const _editFornecedor=window.editFornecedor; window.editFornecedor=id=>{_editFor
 ['Pedido','Produto','Cliente','Fornecedor','Financeiro'].forEach(name=>{
   const el=document.getElementById('cancelar'+name); if(el)el.addEventListener('click',()=>showModuleList(name.toLowerCase()));
 });
-['pedidoForm','produtoForm','clienteForm','fornecedorForm','compraForm','financeiroForm'].forEach(id=>{
+['produtoForm','clienteForm','fornecedorForm','compraForm','financeiroForm'].forEach(id=>{
   const form=document.getElementById(id); if(!form)return;
   const m=id.replace('Form','').replace('pedido','pedido').replace('produto','produto').replace('cliente','cliente').replace('fornecedor','fornecedor').replace('compra','compra').replace('financeiro','financeiro');
   form.addEventListener('submit',()=>setTimeout(()=>showModuleList(m),700));

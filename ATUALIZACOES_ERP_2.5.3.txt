@@ -1,0 +1,11 @@
+CANECAS DEL REI ERP 2.5.3
+
+Correções no cadastro de pedidos:
+- imagens da arte são redimensionadas e compactadas antes da gravação;
+- imagens acima do limite seguro são recusadas com aviso claro;
+- erros de autenticação, permissão, conexão e limite do Firebase agora aparecem na tela;
+- o formulário só retorna à lista depois que o pedido é salvo com sucesso;
+- removido o retorno automático que ocultava falhas de gravação.
+
+Observação: a mensagem "A listener indicated an asynchronous response..." mostrada
+no console do Chrome é normalmente gerada por uma extensão do navegador e não pelo ERP.
